@@ -141,7 +141,7 @@ def format_document(input_path, output_path):
                 level = int(paragraph.style.name.replace('Heading ', ''))
                 apply_heading_style(paragraph, level)
             else:
-                # 正文段落
+                # 正文段落dar
                 apply_body_style(paragraph)
 
                 # 转换为将来时态
