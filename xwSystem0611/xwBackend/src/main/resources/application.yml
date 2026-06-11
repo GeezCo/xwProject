@@ -98,3 +98,34 @@ minio:
   access-key: xianwei-admin
   secret-key: xianwei2024
   bucket: xianwei-images
+
+# RAG 知识库配置
+rag:
+  elasticsearch:
+    host: ${ES_HOST:localhost}
+    port: ${ES_PORT:9200}
+    username: ${ES_USERNAME:}
+    password: ${ES_PASSWORD:}
+    index-name: xianwei_docs
+  embedding:
+    base-url: ${EMBEDDING_BASE_URL:http://localhost:5002}
+    model: bge-large-zh-v1.5
+    dimension: 1024
+    batch-size: 32
+    retry-count: 3
+    retry-delay-ms: 5000
+    timeout-seconds: 60
+  chunk:
+    short-threshold: 128
+    medium-threshold: 512
+    medium-size: 256
+    long-size: 512
+    overlap: 64
+  indexing:
+    max-duration-minutes: 30
+    es-batch-size: 100
+  search:
+    bm25-weight: 0.3
+    vector-weight: 0.7
+    rrf-k: 60
+    default-top-k: 10
