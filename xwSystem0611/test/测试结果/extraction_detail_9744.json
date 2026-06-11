@@ -1,0 +1,38 @@
+{
+  "code": 1,
+  "data": {
+    "originTextId": 9744,
+    "entities": {
+      "部队": [],
+      "人物": [],
+      "组织": [],
+      "火炮": [],
+      "战机": [],
+      "军舰": [],
+      "武器": []
+    },
+    "totalEvents": 1,
+    "extractionTime": "2026-04-23T21:12:45",
+    "id": 13,
+    "events": [
+      {
+        "event_id": 1,
+        "subject": [
+          "《耶路撒冷邮报》"
+        ],
+        "action": "报道",
+        "location": [
+          "以色列"
+        ],
+        "original_text": "据《耶路撒冷邮报》2021 年 10 月 18 日报道，美国与以色列于 2021 年 10 月联合举行了“蓝旗 -2021",
+        "time": "2021 年 10 月 18 日",
+        "labels": [],
+        "paragraph_id": 0
+      }
+    ],
+    "status": "completed",
+    "labels": []
+  },
+  "msg": "success",
+  "flag": "true"
+}

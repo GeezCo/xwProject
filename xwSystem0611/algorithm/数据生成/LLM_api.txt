@@ -1,0 +1,5 @@
+使用openai标准的大模型接口
+
+base_url = "https://llmapi.paratera.com"
+model="GLM-5"
+api_key = "sk-Sf3cCx7aSWyk_4KUFoi8Tw"

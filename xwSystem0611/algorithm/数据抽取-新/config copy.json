@@ -1,0 +1,60 @@
+{
+    "llm": {
+        "base_url": "https://llmapi.paratera.com",
+        "model": "Qwen3.5-122B-A10B",
+        "api_key": "sk-DSPqE9_mabXoyY7eBFjMrQ",
+        "temperature": 0.1,
+        "max_tokens": 16000
+    },
+    "extraction": {
+        "min_paragraph_length": 20,
+        "retry_count": 3,
+        "retry_delay": 2
+    },
+    "subject_categories": {
+        "船只": {
+            "description": "舰船类：航母、驱逐舰、护卫舰、巡洋舰、潜艇、补给舰、两栖攻击舰等",
+            "examples": ["里根号航母", "提康德罗加级巡洋舰", "055型驱逐舰"]
+        },
+        "飞机": {
+            "description": "有人驾驶军用/民用飞机：战斗机、轰炸机、预警机、侦察机、直升机、运输机等",
+            "examples": ["F-35", "B-52轰炸机", "C-130运输机", "阿帕奇直升机"]
+        },
+        "无人机": {
+            "description": "各类无人飞行器：察打一体无人机、侦察无人机、自杀式无人机、FPV穿越机等",
+            "examples": ["Bayraktar TB2", "Shahed-136", "MQ-9死神", "Lancet巡飞弹"]
+        },
+        "导弹": {
+            "description": "各类导弹及反导系统：弹道导弹、巡航导弹、防空导弹、反舰导弹、反导系统等",
+            "examples": ["萨德反导系统", "东风-41", "爱国者导弹"]
+        },
+        "雷达": {
+            "description": "雷达及电子设备：预警雷达、火控雷达、电子战系统、通信设备等",
+            "examples": ["AN/TPY-2雷达", "宙斯盾系统", "相控阵雷达"]
+        },
+        "火炮": {
+            "description": "火炮及火箭炮系统：榴弹炮、自行火炮、多管火箭炮、迫击炮等",
+            "examples": ["HIMARS高机动火箭炮", "M777榴弹炮", "Caesar自行火炮", "Grad火箭炮"]
+        },
+        "坦克/装甲车辆": {
+            "description": "坦克及装甲车辆：主战坦克、步兵战车、装甲运兵车、自行防空车等",
+            "examples": ["T-72坦克", "M1 Abrams", "Leopard 2", "Bradley步战车", "BMP步兵战车"]
+        },
+        "军事基地": {
+            "description": "军事设施：空军基地、海军基地、军港、军事哨所、弹药库等",
+            "examples": ["嘉手纳空军基地", "横须贺海军基地", "关塔那摩基地"]
+        },
+        "部队番号": {
+            "description": "部队编制单位：舰队、集团军、师旅团营、特种部队、军种单位等",
+            "examples": ["第七舰队", "第101空降师", "海豹突击队"]
+        },
+        "人物": {
+            "description": "具体人物：国家领导人、军事指挥官、政治人物、外交官等",
+            "examples": ["拜登", "普京", "岸田文雄"]
+        },
+        "组织": {
+            "description": "组织机构：国际组织、政府机构、军事联盟、政党等",
+            "examples": ["北约", "五角大楼", "欧盟", "联合国"]
+        }
+    }
+}

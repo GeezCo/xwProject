@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant U as 用户
+    participant F as 前端
+    participant B as 后端
+    participant D as 数据库
+    participant C as 缓存
+
+    U->>F: 输入用户名密码
+    F->>B: POST /api/login
+    B->>D: 查询用户信息
+    D-->>B: 返回用户数据
+
+    alt 用户存在
+        B->>B: 验证密码
+        alt 密码正确
+            B->>C: 存储会话Token
+            C-->>B: 存储成功
+            B-->>F: 返回Token
+            F-->>U: 登录成功
+        else 密码错误
+            B-->>F: 密码错误
+            F-->>U: 提示密码错误
+        end
+    else 用户不存在
+        B-->>F: 用户不存在
+        F-->>U: 提示用户不存在
+    end

@@ -1,0 +1,46 @@
+<mxfile host="app.diagrams.net" modified="2026-05-18T00:00:00.000Z" agent="solo" version="22.1.0" type="device">
+  <diagram id="c7gQx6UQW9xQ2V3oYk3X" name="Page-1">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="650" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="box_front" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:20px;font-weight:700;&quot;&gt;前端层&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;Vue 3 + Vite&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;Web Service&lt;span style=&quot;margin-left:8px;&quot;&gt;:5001&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;LLM&lt;span style=&quot;margin-left:8px;&quot;&gt;:8080&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=2;fontFamily=SimSun;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="70" y="80" width="270" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="box_backend" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:20px;font-weight:700;&quot;&gt;后端层&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;Spring Boot&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;:8081&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=2;fontFamily=SimSun;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="465" y="80" width="270" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="box_algo" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:20px;font-weight:700;&quot;&gt;算法服务层&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;Flask +&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;:8000&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=2;fontFamily=SimSun;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="860" y="80" width="270" height="220" as="geometry" />
+        </mxCell>
+
+        <mxCell id="box_mysql" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:18px;font-weight:700;&quot;&gt;MySQL 8.0&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;:8512&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=2;fontFamily=SimSun;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="515" y="380" width="170" height="105" as="geometry" />
+        </mxCell>
+
+        <mxCell id="box_external" value="&lt;div style=&quot;text-align:center;&quot;&gt;&lt;div style=&quot;font-size:18px;font-weight:700;&quot;&gt;外部服务&lt;/div&gt;&lt;div style=&quot;font-size:16px;margin-top:6px;&quot;&gt;LLM/MinIO&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;strokeColor=#000000;fillColor=#FFFFFF;strokeWidth=2;fontFamily=SimSun;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="905" y="380" width="220" height="105" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_front_backend" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#000000;fontFamily=Times New Roman;fontSize=16;labelBackgroundColor=none;" edge="1" parent="1" source="box_front" target="box_backend">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_backend_algo" value="HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#000000;fontFamily=Times New Roman;fontSize=16;labelBackgroundColor=none;" edge="1" parent="1" source="box_backend" target="box_algo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_backend_mysql" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#000000;" edge="1" parent="1" source="box_backend" target="box_mysql">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="edge_algo_external" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#000000;" edge="1" parent="1" source="box_algo" target="box_external">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,17 @@
+{
+  "status_code": 200,
+  "response": {
+    "code": 1,
+    "data": {
+      "totalLines": 5,
+      "successCount": 5,
+      "failCount": 0,
+      "categoryId": 2,
+      "categoryName": "未分类",
+      "uploadedImages": 0,
+      "errors": []
+    },
+    "msg": "success",
+    "flag": "true"
+  }
+}

@@ -1,0 +1,422 @@
+{
+  "test_time": "2026-04-23 11:29:23",
+  "total_reports": 10,
+  "results": [
+    {
+      "sid": 9809,
+      "title": "巴基斯坦与阿塞拜疆联合特别部队举行联合演习",
+      "content_len": 156,
+      "elapsed": 384.4,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 3,
+      "events_count": 3,
+      "labels": [
+        "组织",
+        "部队"
+      ],
+      "labels_count": 2,
+      "entities": {
+        "部队": [
+          "联合特别部队"
+        ],
+        "人物": [],
+        "组织": [
+          "阿纳多卢通讯社"
+        ],
+        "火炮": [],
+        "战机": [],
+        "军舰": [],
+        "武器": []
+      },
+      "entity_count": 2
+    },
+    {
+      "sid": 9840,
+      "title": "俄罗斯黑海舰队在克里米亚举行防空演习",
+      "content_len": 184,
+      "elapsed": 128.1,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 2,
+      "events_count": 2,
+      "labels": [
+        "军舰"
+      ],
+      "labels_count": 1,
+      "entities": {
+        "部队": [
+          "参演部队"
+        ],
+        "人物": [],
+        "组织": [],
+        "火炮": [],
+        "战机": [],
+        "军舰": [
+          "俄罗斯黑海舰队"
+        ],
+        "武器": [
+          "多种防空武器系统"
+        ]
+      },
+      "entity_count": 3
+    },
+    {
+      "sid": 9823,
+      "title": "美韩举行“警戒王牌-2023”联合空演",
+      "content_len": 198,
+      "elapsed": 501.6,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 1,
+      "events_count": 1,
+      "labels": [],
+      "labels_count": 0,
+      "entities": {
+        "部队": [],
+        "人物": [],
+        "组织": [],
+        "火炮": [],
+        "战机": [],
+        "军舰": [],
+        "武器": []
+      },
+      "entity_count": 0
+    },
+    {
+      "sid": 9794,
+      "title": "澳大利亚、日本与美国于3月8日联合举行反潜作战演习",
+      "content_len": 200,
+      "elapsed": 241.0,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 4,
+      "events_count": 4,
+      "labels": [
+        "军舰"
+      ],
+      "labels_count": 1,
+      "entities": {
+        "部队": [],
+        "人物": [],
+        "组织": [],
+        "火炮": [],
+        "战机": [],
+        "军舰": [
+          "多型舰艇",
+          "反潜装备",
+          "三国海军"
+        ],
+        "武器": []
+      },
+      "entity_count": 3
+    },
+    {
+      "sid": 10202,
+      "title": "美格举行“即刻响应2009”联合军演",
+      "content_len": 210,
+      "elapsed": 360.1,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 1,
+      "events_count": 1,
+      "labels": [],
+      "labels_count": 0,
+      "entities": {
+        "部队": [],
+        "人物": [],
+        "组织": [],
+        "火炮": [],
+        "战机": [],
+        "军舰": [],
+        "武器": []
+      },
+      "entity_count": 0
+    },
+    {
+      "sid": 10206,
+      "title": "北约于波兰启动“剑刃打击2024”军事演习",
+      "content_len": 216,
+      "elapsed": 408.4,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 3,
+      "events_count": 3,
+      "labels": [
+        "武器",
+        "部队"
+      ],
+      "labels_count": 2,
+      "entities": {
+        "部队": [
+          "多国部队",
+          "北约"
+        ],
+        "人物": [],
+        "组织": [],
+        "火炮": [],
+        "战机": [],
+        "军舰": [],
+        "武器": [
+          "装备"
+        ]
+      },
+      "entity_count": 3
+    },
+    {
+      "sid": 10132,
+      "title": "泰美两国举行“金色眼镜蛇-2022”联合军演",
+      "content_len": 227,
+      "elapsed": 231.2,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 2,
+      "events_count": 2,
+      "labels": [],
+      "labels_count": 0,
+      "entities": {
+        "部队": [],
+        "人物": [],
+        "组织": [],
+        "火炮": [],
+        "战机": [],
+        "军舰": [],
+        "武器": []
+      },
+      "entity_count": 0
+    },
+    {
+      "sid": 10124,
+      "title": "俄罗斯黑海舰队于4月17日进行海上攻击演练",
+      "content_len": 231,
+      "elapsed": 357.9,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 4,
+      "events_count": 4,
+      "labels": [
+        "军舰"
+      ],
+      "labels_count": 1,
+      "entities": {
+        "部队": [],
+        "人物": [],
+        "组织": [],
+        "火炮": [],
+        "战机": [],
+        "军舰": [
+          "俄罗斯黑海舰队",
+          "黑海舰队相关负责人"
+        ],
+        "武器": []
+      },
+      "entity_count": 2
+    },
+    {
+      "sid": 9861,
+      "title": "日本举行年度最大规模“富士综合火力演习”",
+      "content_len": 241,
+      "elapsed": 189.2,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 2,
+      "events_count": 2,
+      "labels": [
+        "部队",
+        "火炮"
+      ],
+      "labels_count": 2,
+      "entities": {
+        "部队": [
+          "地面与空中兵力",
+          "日本自卫队"
+        ],
+        "人物": [],
+        "组织": [],
+        "火炮": [
+          "富士综合火力演习"
+        ],
+        "战机": [],
+        "军舰": [],
+        "武器": []
+      },
+      "entity_count": 3
+    },
+    {
+      "sid": 9910,
+      "title": "中巴两国陆军在喀喇昆仑山举行“友谊2013”反恐联合演习",
+      "content_len": 276,
+      "elapsed": 1004.6,
+      "http_status": 200,
+      "status": "OK",
+      "total_events": 4,
+      "events_count": 4,
+      "labels": [
+        "军舰",
+        "武器",
+        "部队"
+      ],
+      "labels_count": 3,
+      "entities": {
+        "部队": [
+          "双方官兵",
+          "两军"
+        ],
+        "人物": [],
+        "组织": [],
+        "火炮": [],
+        "战机": [],
+        "军舰": [
+          "中国陆军"
+        ],
+        "武器": [
+          "巴基斯坦陆军"
+        ]
+      },
+      "entity_count": 4
+    }
+  ],
+  "anomalies": [
+    {
+      "sid": 9809,
+      "type": "事件字段缺失",
+      "detail": "event[0]缺少['location']"
+    },
+    {
+      "sid": 9809,
+      "type": "事件字段缺失",
+      "detail": "event[2]缺少['location']"
+    },
+    {
+      "sid": 9809,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 9840,
+      "type": "事件字段缺失",
+      "detail": "event[1]缺少['location']"
+    },
+    {
+      "sid": 9840,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 9823,
+      "type": "无标签",
+      "detail": "labels为空"
+    },
+    {
+      "sid": 9823,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 9794,
+      "type": "事件字段缺失",
+      "detail": "event[0]缺少['location']"
+    },
+    {
+      "sid": 9794,
+      "type": "事件字段缺失",
+      "detail": "event[1]缺少['location']"
+    },
+    {
+      "sid": 9794,
+      "type": "事件字段缺失",
+      "detail": "event[2]缺少['location']"
+    },
+    {
+      "sid": 9794,
+      "type": "事件字段缺失",
+      "detail": "event[3]缺少['location']"
+    },
+    {
+      "sid": 9794,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 10202,
+      "type": "无标签",
+      "detail": "labels为空"
+    },
+    {
+      "sid": 10202,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 10206,
+      "type": "事件字段缺失",
+      "detail": "event[2]缺少['location']"
+    },
+    {
+      "sid": 10206,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 10132,
+      "type": "事件字段缺失",
+      "detail": "event[0]缺少['location']"
+    },
+    {
+      "sid": 10132,
+      "type": "无标签",
+      "detail": "labels为空"
+    },
+    {
+      "sid": 10132,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 10124,
+      "type": "事件字段缺失",
+      "detail": "event[2]缺少['location']"
+    },
+    {
+      "sid": 10124,
+      "type": "事件字段缺失",
+      "detail": "event[3]缺少['location']"
+    },
+    {
+      "sid": 10124,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 9861,
+      "type": "事件字段缺失",
+      "detail": "event[1]缺少['location']"
+    },
+    {
+      "sid": 9861,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    },
+    {
+      "sid": 9910,
+      "type": "事件字段缺失",
+      "detail": "event[2]缺少['location']"
+    },
+    {
+      "sid": 9910,
+      "type": "事件字段缺失",
+      "detail": "event[3]缺少['location']"
+    },
+    {
+      "sid": 9910,
+      "type": "实体类别缺失",
+      "detail": "缺少['装备']"
+    }
+  ],
+  "summary": {
+    "success": 10,
+    "fail": 0,
+    "total_anomalies": 27,
+    "avg_elapsed": 380.6
+  }
+}

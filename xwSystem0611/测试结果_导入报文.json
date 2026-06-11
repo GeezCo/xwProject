@@ -1,0 +1,13 @@
+{
+  "code": 1,
+  "data": {
+    "totalLines": 1020,
+    "successCount": 1020,
+    "failCount": 0,
+    "categoryId": 57,
+    "categoryName": "仿真报",
+    "errors": []
+  },
+  "msg": "success",
+  "flag": "true"
+}

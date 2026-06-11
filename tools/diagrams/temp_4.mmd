@@ -1,0 +1,26 @@
+classDiagram
+    class Animal {
+        +String name
+        +int age
+        +makeSound()
+    }
+    class Dog {
+        +String breed
+        +bark()
+        +fetch()
+    }
+    class Cat {
+        +String color
+        +meow()
+        +scratch()
+    }
+    Animal <|-- Dog
+    Animal <|-- Cat
+
+    class Person {
+        -String name
+        -Animal pet
+        +adoptPet(Animal)
+        +feedPet()
+    }
+    Person "1" --> "0..1" Animal : has

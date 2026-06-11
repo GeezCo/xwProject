@@ -1,0 +1,55 @@
+{
+  "test_config": {
+    "sample_size": 100,
+    "model": "Qwen/Qwen3.5-35B-A3B-w8a8-mtp",
+    "base_url": "http://36.141.21.176:8513/v1",
+    "categories": [
+      "船只",
+      "飞机",
+      "导弹",
+      "雷达",
+      "军事基地",
+      "部队番号",
+      "人物",
+      "组织",
+      "无人机",
+      "火炮",
+      "坦克/装甲车辆"
+    ],
+    "temperature": 0.1,
+    "max_tokens": 16000,
+    "thinking_enabled": false
+  },
+  "stability": {
+    "total_processed": 100,
+    "success_with_events": 100,
+    "success_empty": 0,
+    "failures": 0,
+    "success_rate": 100.0,
+    "event_extraction_rate": 100.0
+  },
+  "speed": {
+    "total_time_seconds": 457.29,
+    "avg_time_per_record": 4.57,
+    "min_time": 3.11,
+    "max_time": 9.06
+  },
+  "accuracy": {
+    "total_events_extracted": 187,
+    "avg_events_per_record": 1.87,
+    "category_entity_counts": {
+      "船只": 34,
+      "飞机": 20,
+      "导弹": 202,
+      "雷达": 10,
+      "军事基地": 163,
+      "部队番号": 21,
+      "人物": 34,
+      "组织": 18,
+      "无人机": 1,
+      "火炮": 0,
+      "坦克/装甲车辆": 0
+    }
+  },
+  "errors": []
+}

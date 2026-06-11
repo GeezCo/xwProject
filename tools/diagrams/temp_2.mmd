@@ -1,0 +1,17 @@
+gantt
+    title 项目开发进度计划
+    dateFormat  YYYY-MM-DD
+    section 需求阶段
+    需求调研     :a1, 2024-01-01, 7d
+    需求分析     :a2, after a1, 5d
+    需求评审     :a3, after a2, 2d
+    section 设计阶段
+    系统设计     :b1, after a3, 5d
+    详细设计     :b2, after b1, 7d
+    设计评审     :b3, after b2, 2d
+    section 开发阶段
+    编码开发     :c1, after b3, 14d
+    单元测试     :c2, after c1, 5d
+    section 测试阶段
+    集成测试     :d1, after c2, 5d
+    验收测试     :d2, after d1, 3d

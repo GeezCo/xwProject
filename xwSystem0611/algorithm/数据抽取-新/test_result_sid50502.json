@@ -1,0 +1,83 @@
+{
+  "extraction_time": "2026-04-30 20:59:00",
+  "text_length": 124,
+  "paragraph_count": 1,
+  "total_events": 5,
+  "subject_categories": [
+    "船只",
+    "飞机",
+    "导弹",
+    "雷达",
+    "军事基地",
+    "部队番号",
+    "人物",
+    "组织"
+  ],
+  "events": [
+    {
+      "time": "2026年1月22日",
+      "location": [
+        "南海"
+      ],
+      "组织": [
+        "美军"
+      ],
+      "action": "举行联合演习",
+      "original_text": "一是在南海举行联合演习；",
+      "paragraph_id": 0,
+      "event_id": 1
+    },
+    {
+      "time": "2026年1月22日",
+      "人物": [
+        "拜登"
+      ],
+      "action": "发表声明",
+      "original_text": "二是拜登发表声明；",
+      "location": [],
+      "paragraph_id": 0,
+      "event_id": 2
+    },
+    {
+      "time": "2026年1月22日",
+      "location": [
+        "华盛顿"
+      ],
+      "人物": [
+        "布林肯",
+        "岸田文雄"
+      ],
+      "action": "会面",
+      "original_text": "三是布林肯与岸田文雄在华盛顿会面；",
+      "paragraph_id": 0,
+      "event_id": 3
+    },
+    {
+      "time": "2026年1月22日",
+      "军事基地": [
+        "横须贺海军基地"
+      ],
+      "人物": [
+        "奥斯汀"
+      ],
+      "action": "进行港口访问",
+      "original_text": "四是奥斯汀去横须贺海军基地进行港口访问；",
+      "location": [],
+      "paragraph_id": 0,
+      "event_id": 4
+    },
+    {
+      "time": "2026年1月22日",
+      "location": [
+        "东海"
+      ],
+      "飞机": [
+        "F-35B 战斗机"
+      ],
+      "action": "进行巡逻",
+      "original_text": "五是 F-35B 战斗机在东海空域进行巡逻。",
+      "paragraph_id": 0,
+      "event_id": 5
+    }
+  ]
+}

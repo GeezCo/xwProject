@@ -1,0 +1,90 @@
+{
+  "test_time": "2026-04-10 19:54:27",
+  "total": 10,
+  "success": 10,
+  "fail": 0,
+  "total_events": 17,
+  "avg_time": 131.75,
+  "results": [
+    {
+      "id": 1,
+      "title": "开罗炸弹爆炸",
+      "status": "成功",
+      "events": 3,
+      "llm_calls": 2,
+      "time": 119.84
+    },
+    {
+      "id": 2,
+      "title": "巴基斯坦军事演习",
+      "status": "成功",
+      "events": 2,
+      "llm_calls": 2,
+      "time": 126.73
+    },
+    {
+      "id": 3,
+      "title": "北约军演",
+      "status": "成功",
+      "events": 2,
+      "llm_calls": 2,
+      "time": 49.83
+    },
+    {
+      "id": 4,
+      "title": "伊拉克爆炸袭击",
+      "status": "成功",
+      "events": 2,
+      "llm_calls": 2,
+      "time": 698.09
+    },
+    {
+      "id": 5,
+      "title": "美军舰访问",
+      "status": "成功",
+      "events": 1,
+      "llm_calls": 1,
+      "time": 44.91
+    },
+    {
+      "id": 6,
+      "title": "中俄联合军演",
+      "status": "成功",
+      "events": 1,
+      "llm_calls": 1,
+      "time": 33.06
+    },
+    {
+      "id": 7,
+      "title": "法国撤军",
+      "status": "成功",
+      "events": 2,
+      "llm_calls": 1,
+      "time": 85.79
+    },
+    {
+      "id": 8,
+      "title": "日本防卫预算",
+      "status": "成功",
+      "events": 2,
+      "llm_calls": 1,
+      "time": 69.96
+    },
+    {
+      "id": 9,
+      "title": "韩国美国联合军演",
+      "status": "成功",
+      "events": 1,
+      "llm_calls": 1,
+      "time": 45.0
+    },
+    {
+      "id": 10,
+      "title": "伊朗导弹试射",
+      "status": "成功",
+      "events": 1,
+      "llm_calls": 1,
+      "time": 44.27
+    }
+  ]
+}

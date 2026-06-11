@@ -1,0 +1,48 @@
+{
+  "code": 1,
+  "data": {
+    "originTextId": 9751,
+    "entities": {
+      "部队": [],
+      "人物": [],
+      "组织": [],
+      "火炮": [],
+      "战机": [],
+      "军舰": [],
+      "武器": []
+    },
+    "totalEvents": 2,
+    "extractionTime": "2026-04-23T22:27:02",
+    "id": 15,
+    "events": [
+      {
+        "event_id": 1,
+        "subject": [
+          "印度",
+          "美国"
+        ],
+        "action": "举行“金龙 -2022",
+        "original_text": "印美两国举行“金龙 -2022",
+        "time": "",
+        "labels": [],
+        "paragraph_id": 0
+      },
+      {
+        "event_id": 2,
+        "subject": [
+          "印度",
+          "美国"
+        ],
+        "action": "举行了“金龙 -2022",
+        "original_text": "2022 年 4 月 7 日，印度与美国两国举行了“金龙 -2022",
+        "time": "2022 年 4 月 7 日",
+        "labels": [],
+        "paragraph_id": 1
+      }
+    ],
+    "status": "completed",
+    "labels": []
+  },
+  "msg": "success",
+  "flag": "true"
+}

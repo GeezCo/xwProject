@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650">
+  <rect x="0" y="0" width="1200" height="650" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#000000"/>
+    </marker>
+    <style>
+      .box { fill: #ffffff; stroke: #000000; stroke-width: 2; }
+      .line { stroke: #000000; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .title { font-family: SimSun, "Source Han Serif SC", "Noto Serif CJK SC", serif; font-size: 20px; font-weight: 700; fill: #000000; }
+      .body { font-family: SimSun, "Source Han Serif SC", "Noto Serif CJK SC", serif; font-size: 16px; font-weight: 400; fill: #000000; }
+      .label { font-family: "Times New Roman", serif; font-size: 16px; font-weight: 400; fill: #000000; }
+    </style>
+  </defs>
+
+  <rect class="box" x="70" y="80" width="270" height="220"/>
+  <text class="title" x="205" y="120" text-anchor="middle">前端层</text>
+  <text class="body" x="205" y="155" text-anchor="middle">Vue 3 + Vite</text>
+  <text class="body" x="205" y="190" text-anchor="middle">Web Service  :5001</text>
+  <text class="body" x="205" y="225" text-anchor="middle">LLM  :8080</text>
+
+  <rect class="box" x="465" y="80" width="270" height="220"/>
+  <text class="title" x="600" y="120" text-anchor="middle">后端层</text>
+  <text class="body" x="600" y="155" text-anchor="middle">Spring Boot</text>
+  <text class="body" x="600" y="190" text-anchor="middle">:8081</text>
+
+  <rect class="box" x="860" y="80" width="270" height="220"/>
+  <text class="title" x="995" y="120" text-anchor="middle">算法服务层</text>
+  <text class="body" x="995" y="155" text-anchor="middle">Flask +</text>
+  <text class="body" x="995" y="190" text-anchor="middle">:8000</text>
+
+  <rect class="box" x="515" y="380" width="170" height="105"/>
+  <text class="title" x="600" y="420" text-anchor="middle" style="font-size:18px;">MySQL 8.0</text>
+  <text class="body" x="600" y="455" text-anchor="middle">:8512</text>
+
+  <rect class="box" x="905" y="380" width="220" height="105"/>
+  <text class="title" x="1015" y="420" text-anchor="middle" style="font-size:18px;">外部服务</text>
+  <text class="body" x="1015" y="455" text-anchor="middle">LLM/MinIO</text>
+
+  <path class="line" d="M 340 190 L 465 190"/>
+  <text class="label" x="402" y="170" text-anchor="middle">HTTP</text>
+
+  <path class="line" d="M 735 190 L 860 190"/>
+  <text class="label" x="797" y="170" text-anchor="middle">HTTP</text>
+
+  <path class="line" d="M 600 300 L 600 380"/>
+  <path class="line" d="M 995 300 L 995 380"/>
+</svg>

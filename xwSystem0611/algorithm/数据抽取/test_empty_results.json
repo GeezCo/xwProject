@@ -1,0 +1,152 @@
+{
+  "stats": {
+    "total": 5,
+    "success": 5,
+    "empty_events": 0,
+    "failed": 0,
+    "total_events": 6
+  },
+  "results": [
+    {
+      "sid": 9741,
+      "title": "乌克兰与北约联合举办“海风2008”多国海上演习",
+      "status": "成功",
+      "event_count": 2,
+      "elapsed_seconds": 214.14,
+      "events": [
+        {
+          "subject": [
+            "乌克兰",
+            "北约"
+          ],
+          "action": "联合举办“海风 2008",
+          "original_text": "乌克兰与北约联合举办“海风 2008",
+          "time": "",
+          "paragraph_id": 0,
+          "event_id": 1
+        },
+        {
+          "subject": [
+            "乌克兰",
+            "北约成员国"
+          ],
+          "action": "联合举办“海风 2008",
+          "location": [
+            "黑海海域"
+          ],
+          "original_text": "2008 年 7 月 25 日，乌克兰与北约成员国在黑海海域联合举办“海风 2008",
+          "time": "2008 年 7 月 25 日",
+          "paragraph_id": 1,
+          "event_id": 2
+        }
+      ],
+      "entities": {},
+      "labels": [],
+      "llm_calls": 0,
+      "llm_calls_saved": 0
+    },
+    {
+      "sid": 9743,
+      "title": "中巴携手交流 巴基斯坦“勇士-IX”军事演习邀请中国观察员",
+      "status": "成功",
+      "event_count": 1,
+      "elapsed_seconds": 331.45,
+      "events": [
+        {
+          "subject": [
+            "巴基斯坦"
+          ],
+          "action": "举行了“勇士 -IX",
+          "location": [
+            "巴基斯坦"
+          ],
+          "original_text": "2022 年 9 月，巴基斯坦举行了“勇士 -IX",
+          "time": "2022 年 9 月",
+          "paragraph_id": 1,
+          "event_id": 1
+        }
+      ],
+      "entities": {},
+      "labels": [],
+      "llm_calls": 0,
+      "llm_calls_saved": 0
+    },
+    {
+      "sid": 9744,
+      "title": "美以举行“蓝旗-2021”空军联合演习",
+      "status": "成功",
+      "event_count": 1,
+      "elapsed_seconds": 166.34,
+      "events": [
+        {
+          "subject": [
+            "《耶路撒冷邮报》"
+          ],
+          "action": "报道",
+          "location": [
+            "以色列"
+          ],
+          "original_text": "据《耶路撒冷邮报》2021 年 10 月 18 日报道，美国与以色列于 2021 年 10 月联合举行了“蓝旗 -2021",
+          "time": "2021 年 10 月 18 日",
+          "paragraph_id": 0,
+          "event_id": 1
+        }
+      ],
+      "entities": {},
+      "labels": [],
+      "llm_calls": 0,
+      "llm_calls_saved": 0
+    },
+    {
+      "sid": 9747,
+      "title": "美澳联合举行“护身军刀-2023”军演",
+      "status": "成功",
+      "event_count": 1,
+      "elapsed_seconds": 161.21,
+      "events": [
+        {
+          "subject": [
+            "美国",
+            "澳大利亚"
+          ],
+          "action": "联合举行“护身军刀 -2023",
+          "location": [
+            "澳大利亚"
+          ],
+          "original_text": "2023 年 3 月 3 日，美国与澳大利亚联合举行的“护身军刀 -2023",
+          "time": "2023 年 3 月 3 日",
+          "paragraph_id": 0,
+          "event_id": 1
+        }
+      ],
+      "entities": {},
+      "labels": [],
+      "llm_calls": 0,
+      "llm_calls_saved": 0
+    },
+    {
+      "sid": 9748,
+      "title": "俄印举行“因陀罗-2016”联合军事演习",
+      "status": "成功",
+      "event_count": 1,
+      "elapsed_seconds": 141.5,
+      "events": [
+        {
+          "subject": [
+            "俄罗斯",
+            "印度"
+          ],
+          "action": "举行了“因陀罗 -2016",
+          "original_text": "2016 年 9 月 5 日，俄罗斯与印度在战略合作框架下举行了“因陀罗 -2016",
+          "time": "2016 年 9 月 5 日",
+          "paragraph_id": 0,
+          "event_id": 1
+        }
+      ],
+      "entities": {},
+      "labels": [],
+      "llm_calls": 0,
+      "llm_calls_saved": 0
+    }
+  ]
+}

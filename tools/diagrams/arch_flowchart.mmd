@@ -1,0 +1,17 @@
+flowchart LR
+    %% 全局样式：学术风格、大字体、无花哨效果
+    classDef layer fill:#ffffff,stroke:#333333,stroke-width:2px,font-size:18px,color:#000000
+    classDef arrow font-size:16px
+
+    %% 节点定义（严格对应原图层级与文字）
+    A["前端层<br>Vue 3 + Vite<br>端口：8080"]:::layer
+    B["后端层<br>Spring Boot<br>端口：8081"]:::layer
+    C["算法服务层<br>Flask + LLM<br>端口：5001"]:::layer
+    D["数据存储<br>MySQL 8.0<br>端口：8512"]:::layer
+    E["外部服务<br>LLM / MinIO"]:::layer
+
+    %% 箭头标注（严格保留原图关系）
+    A -->|"HTTP"| B
+    B -->|"HTTP"| C
+    B --> D
+    C --> E

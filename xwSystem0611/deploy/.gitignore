@@ -1,0 +1,10 @@
+# 构建产物（由 prepare 步骤放入，不提交到 git）
+dist/
+uygur-project-0.0.1-SNAPSHOT.jar
+
+# 迁移数据
+init.sql
+minio_images/
+
+# 算法模块副本（从项目根 算法/ 复制）
+算法/

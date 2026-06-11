@@ -1,0 +1,35 @@
+{
+  "start_time": "2026-05-03 00:58:20",
+  "end_time": "2026-05-03 01:07:57",
+  "duration_seconds": 577.064941,
+  "image_count": 3,
+  "vision_model": "Qwen3-VL-235B-A22B-Instruct",
+  "text_model": "GLM-5",
+  "base_url": "https://llmapi.paratera.com",
+  "output_format": "jsonl",
+  "item_diversity": "low",
+  "content_diversity": "high",
+  "specified_sample": null,
+  "results": [
+    {
+      "image": "1006_annotated.png",
+      "status": "success",
+      "sample_matched": "6.txt",
+      "title": "东海海域海上目标活动情况综述"
+    },
+    {
+      "image": "1008_annotated.png",
+      "status": "success",
+      "sample_matched": "1.txt",
+      "title": "关于乌代德空军基地机场运行情况的侦察通报"
+    },
+    {
+      "image": "1009_annotated.png",
+      "status": "success",
+      "sample_matched": "1.txt",
+      "title": "美三泽空军基地军机驻停情况"
+    }
+  ],
+  "total_success": 3,
+  "total_failed": 0
+}

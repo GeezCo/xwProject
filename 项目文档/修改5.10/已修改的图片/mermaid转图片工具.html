@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid / SVG 转图片工具</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body {
+            height: 100%;
+            width: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+        .page {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 15px;
+        }
+        .header {
+            flex-shrink: 0;
+            margin-bottom: 10px;
+        }
+        h1 { color: #333; font-size: 18px; margin-bottom: 5px; }
+        .subtitle { color: #666; font-size: 13px; }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .tab {
+            padding: 8px 20px;
+            background: #e0e0e0;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            transition: all 0.2s;
+        }
+        .tab.active {
+            background: white;
+            color: #333;
+            font-weight: 500;
+        }
+        .tab:hover { background: #d0d0d0; }
+        .tab.active:hover { background: white; }
+        .main {
+            display: flex;
+            flex: 1;
+            gap: 15px;
+            min-height: 0;
+            background: white;
+            border-radius: 0 6px 6px 6px;
+            padding: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .left-panel {
+            width: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+        .panel-title { color: #444; font-size: 14px; margin-bottom: 10px; font-weight: 500; }
+        textarea {
+            flex: 1;
+            width: 100%;
+            min-height: 150px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+            line-height: 1.4;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background: #1976D2; }
+        button.green { background: #4CAF50; }
+        button.green:hover { background: #43A047; }
+        button.orange { background: #FF9800; }
+        button.orange:hover { background: #F57C00; }
+        button.purple { background: #9C27B0; }
+        button.purple:hover { background: #7B1FA2; }
+        button.gray { background: #9E9E9E; }
+        button.gray:hover { background: #757575; }
+        .settings {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #eee;
+        }
+        .settings-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 6px;
+            align-items: center;
+        }
+        .settings-row label {
+            font-size: 12px;
+            color: #555;
+            min-width: 60px;
+        }
+        .settings-row input, .settings-row select {
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 12px;
+            width: 100%;
+        }
+        .status {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+            padding: 3px 6px;
+            background: #f5f5f5;
+            border-radius: 3px;
+        }
+        .status.ok { color: #2e7d32; background: #e8f5e9; }
+        .status.err { color: #c62828; background: #ffebee; }
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .zoom-box {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        .zoom-box button {
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+        .zoom-box span {
+            font-size: 11px;
+            color: #666;
+            min-width: 36px;
+            text-align: center;
+        }
+        #previewBox {
+            flex: 1;
+            background: #fafafa;
+            border-radius: 4px;
+            padding: 15px;
+            overflow: auto;
+            border: 1px solid #e0e0e0;
+            min-height: 0;
+        }
+        #preview {
+            display: inline-block;
+            transform-origin: top left;
+        }
+        #preview svg {
+            max-width: none;
+        }
+        /* 文件上传区域 */
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fafafa;
+            margin-bottom: 10px;
+        }
+        .upload-area:hover {
+            border-color: #2196F3;
+            background: #e3f2fd;
+        }
+        .upload-area.dragover {
+            border-color: #2196F3;
+            background: #bbdefb;
+        }
+        .upload-icon {
+            font-size: 36px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        .upload-text {
+            font-size: 13px;
+            color: #666;
+        }
+        .upload-hint {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+        #fileInput { display: none; }
+        .file-info {
+            font-size: 12px;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 6px 10px;
+            border-radius: 3px;
+            margin-top: 10px;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="header">
+            <h1>Mermaid / SVG 转图片工具</h1>
+            <p class="subtitle">支持 Mermaid 代码渲染 + SVG 文件转 PNG/JPG</p>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('mermaid')">Mermaid 转 SVG/PNG</div>
+                <div class="tab" onclick="switchTab('svg2img')">SVG 转 PNG/JPG</div>
+            </div>
+        </div>
+
+        <div class="main">
+            <!-- Mermaid 转换面板 -->
+            <div id="mermaidPanel" class="left-panel">
+                <div class="panel-title">Mermaid 代码</div>
+                <textarea id="codeInput" placeholder="粘贴 mermaid 代码..."></textarea>
+                <div class="buttons">
+                    <button onclick="doPreview()">预览</button>
+                    <button onclick="doClear()" class="gray">清空</button>
+                    <button onclick="doDownloadSVG()" class="green">下载 SVG</button>
+                    <button onclick="doDownloadPNG()" class="orange">下载 PNG</button>
+                </div>
+                <div class="settings">
+                    <div class="settings-row">
+                        <label>文件名</label>
+                        <input type="text" id="fileName" value="diagram">
+                    </div>
+                    <div class="settings-row">
+                        <label>图片宽度</label>
+                        <input type="number" id="pngWidth" value="1920" min="400" max="4000">
+                    </div>
+                </div>
+                <div id="statusBar1" class="status"></div>
+            </div>
+
+            <!-- SVG 转换面板 -->
+            <div id="svg2imgPanel" class="left-panel hidden">
+                <div class="panel-title">上传 SVG 文件</div>
+                <div class="upload-area" onclick="triggerUpload()" id="uploadArea">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">点击或拖拽 SVG 文件到此处</div>
+                    <div class="upload-hint">支持 .svg 文件</div>
+                </div>
+                <input type="file" id="fileInput" accept=".svg" onchange="handleFile(event)">
+                <div id="fileInfo" class="file-info hidden"></div>
+                <div class="buttons">
+                    <button onclick="previewUploadedSVG()">预览</button>
+                    <button onclick="clearUpload()" class="gray">清空</button>
+                    <button onclick="downloadConverted('png')" class="green">下载 PNG</button>
+                    <button onclick="downloadConverted('jpg')" class="purple">下载 JPG</button>
+                </div>
+                <div class="settings">
+                    <div class="settings-row">
+                        <label>文件名</label>
+                        <input type="text" id="convertFileName" value="converted">
+                    </div>
+                    <div class="settings-row">
+                        <label>图片宽度</label>
+                        <input type="number" id="convertWidth" value="1920" min="400" max="4000">
+                    </div>
+                    <div class="settings-row">
+                        <label>背景色</label>
+                        <select id="bgColor">
+                            <option value="white">白色</option>
+                            <option value="transparent">透明</option>
+                            <option value="#f5f5f5">浅灰</option>
+                            <option value="#000000">黑色</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="statusBar2" class="status"></div>
+            </div>
+
+            <!-- 预览面板 -->
+            <div class="right-panel">
+                <div class="preview-header">
+                    <div class="panel-title">预览</div>
+                    <div class="zoom-box">
+                        <button onclick="zoomOut()" class="gray">-</button>
+                        <span id="zoomTxt">200%</span>
+                        <button onclick="zoomIn()" class="gray">+</button>
+                        <button onclick="zoomReset()" class="gray">重置</button>
+                    </div>
+                </div>
+                <div id="previewBox">
+                    <div id="preview">点击「预览」按钮查看图表</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+
+        var cnt = 0;
+        var svgData = '';
+        var uploadedSVG = '';
+        var currentTab = 'mermaid';
+        var zoom = 2;
+
+        function log(msg, type, bar) {
+            var el = document.getElementById(bar || 'statusBar1');
+            el.textContent = msg;
+            el.className = 'status ' + (type || '');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(function(t, i) {
+                t.className = 'tab' + (i === 0 && tab === 'mermaid' || i === 1 && tab === 'svg2img' ? ' active' : '');
+            });
+            document.getElementById('mermaidPanel').className = 'left-panel' + (tab === 'mermaid' ? '' : ' hidden');
+            document.getElementById('svg2imgPanel').className = 'left-panel' + (tab === 'svg2img' ? '' : ' hidden');
+            // 清空预览
+            document.getElementById('preview').innerHTML = '点击「预览」按钮查看图表';
+            svgData = '';
+            uploadedSVG = '';
+        }
+        window.switchTab = switchTab;
+
+        function setZoom() {
+            document.getElementById('zoomTxt').textContent = Math.round(zoom * 100) + '%';
+            var preview = document.getElementById('preview');
+            preview.style.transform = 'scale(' + zoom + ')';
+        }
+
+        function zoomIn() { if (zoom < 4) { zoom += 0.25; setZoom(); } }
+        function zoomOut() { if (zoom > 0.5) { zoom -= 0.25; setZoom(); } }
+        function zoomReset() { zoom = 2; setZoom(); }
+
+        function doPreview() {
+            var code = document.getElementById('codeInput').value.trim();
+            if (!code) { alert('请先粘贴代码'); return; }
+
+            log('渲染中...', '', 'statusBar1');
+            var preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            preview.style.transform = 'scale(' + zoom + ')';
+            svgData = '';
+
+            cnt++;
+            var id = 'm' + cnt + '_' + Date.now();
+
+            mermaid.render(id, code).then(function(r) {
+                svgData = r.svg;
+                preview.innerHTML = r.svg;
+                setZoom();
+                log('渲染成功', 'ok', 'statusBar1');
+            }).catch(function(e) {
+                preview.innerHTML = '<div style="color:#c62828;padding:15px;">渲染失败: ' + e.message + '</div>';
+                log('渲染失败', 'err', 'statusBar1');
+            });
+        }
+
+        function getSVG() {
+            if (!svgData) {
+                var s = document.querySelector('#preview svg');
+                if (s) svgData = s.outerHTML;
+            }
+            if (!svgData) { alert('请先预览'); return null; }
+            return svgData;
+        }
+
+        function fixNS(svg) {
+            if (!svg.includes('xmlns="http://www.w3.org/2000/svg"')) {
+                svg = svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+            }
+            return svg;
+        }
+
+        function doDownloadSVG() {
+            var svg = getSVG();
+            if (!svg) return;
+            svg = fixNS(svg);
+            var name = document.getElementById('fileName').value || 'diagram';
+            var blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = name + '.svg';
+            a.click();
+            URL.revokeObjectURL(url);
+            log('SVG 已下载: ' + name + '.svg', 'ok', 'statusBar1');
+        }
+
+        function downloadImage(svg, name, width, format, bgColor) {
+            var tmp = document.createElement('div');
+            tmp.innerHTML = svg;
+            var s = tmp.querySelector('svg');
+            var vb = s.getAttribute('viewBox') || '';
+            var sw = 800, sh = 600;
+            if (vb) {
+                var p = vb.split(/[\s,]+/);
+                if (p.length >= 4) { sw = parseFloat(p[2]) || 800; sh = parseFloat(p[3]) || 600; }
+            }
+
+            var cw = width;
+            var ch = Math.round(sh * (width / sw));
+
+            var canvas = document.createElement('canvas');
+            canvas.width = cw;
+            canvas.height = ch;
+            var ctx = canvas.getContext('2d');
+
+            // 背景
+            if (bgColor !== 'transparent') {
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, cw, ch);
+            }
+
+            var svgBase64 = btoa(unescape(encodeURIComponent(svg)));
+            var img = new Image();
+
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, cw, ch);
+                try {
+                    var mime = format === 'jpg' ? 'image/jpeg' : 'image/png';
+                    var url = canvas.toDataURL(mime, format === 'jpg' ? 0.92 : 1);
+                    var a = document.createElement('a');
+                    a.href = url;
+                    a.download = name + '.' + format;
+                    a.click();
+                    log(format.toUpperCase() + ' 已下载: ' + cw + 'x' + ch, 'ok', currentTab === 'mermaid' ? 'statusBar1' : 'statusBar2');
+                } catch(ex) {
+                    log('导出失败(浏览器限制)', 'err', currentTab === 'mermaid' ? 'statusBar1' : 'statusBar2');
+                    alert('导出失败。建议：下载SVG后使用在线转换工具。');
+                }
+            };
+
+            img.onerror = function() {
+                log('生成失败', 'err', currentTab === 'mermaid' ? 'statusBar1' : 'statusBar2');
+                alert('图片生成失败');
+            };
+
+            img.src = 'data:image/svg+xml;base64,' + svgBase64;
+        }
+
+        function doDownloadPNG() {
+            var svg = getSVG();
+            if (!svg) return;
+            svg = fixNS(svg);
+            var name = document.getElementById('fileName').value || 'diagram';
+            var w = parseInt(document.getElementById('pngWidth').value) || 1920;
+            downloadImage(svg, name, w, 'png', 'white');
+        }
+
+        function doClear() {
+            document.getElementById('codeInput').value = '';
+            document.getElementById('preview').innerHTML = '点击「预览」按钮查看图表';
+            document.getElementById('preview').style.transform = 'scale(' + zoom + ')';
+            svgData = '';
+            log('', '', 'statusBar1');
+        }
+
+        // SVG 上传功能
+        function triggerUpload() {
+            document.getElementById('fileInput').click();
+        }
+        window.triggerUpload = triggerUpload;
+
+        function handleFile(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+            if (!file.name.toLowerCase().endsWith('.svg')) {
+                alert('请上传 SVG 文件');
+                return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedSVG = e.target.result;
+                document.getElementById('fileInfo').textContent = '已加载: ' + file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+                document.getElementById('fileInfo').className = 'file-info';
+                log('SVG 文件已加载', 'ok', 'statusBar2');
+            };
+            reader.readAsText(file);
+        }
+        window.handleFile = handleFile;
+
+        // 拖拽上传
+        var uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.className = 'upload-area dragover';
+        });
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.className = 'upload-area';
+        });
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.className = 'upload-area';
+            var files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                handleFile({ target: { files: files } });
+            }
+        });
+
+        function previewUploadedSVG() {
+            if (!uploadedSVG) { alert('请先上传 SVG 文件'); return; }
+            var preview = document.getElementById('preview');
+            preview.innerHTML = '';
+            preview.style.transform = 'scale(' + zoom + ')';
+            preview.innerHTML = fixNS(uploadedSVG);
+            setZoom();
+            log('SVG 已预览', 'ok', 'statusBar2');
+        }
+        window.previewUploadedSVG = previewUploadedSVG;
+
+        function downloadConverted(format) {
+            var svg = uploadedSVG;
+            if (!svg) {
+                var s = document.querySelector('#preview svg');
+                if (s) svg = s.outerHTML;
+            }
+            if (!svg) { alert('请先预览或上传 SVG'); return; }
+            svg = fixNS(svg);
+            var name = document.getElementById('convertFileName').value || 'converted';
+            var w = parseInt(document.getElementById('convertWidth').value) || 1920;
+            var bg = document.getElementById('bgColor').value;
+            downloadImage(svg, name, w, format, bg);
+        }
+        window.downloadConverted = downloadConverted;
+
+        function clearUpload() {
+            uploadedSVG = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfo').className = 'file-info hidden';
+            document.getElementById('preview').innerHTML = '点击「预览」按钮查看图表';
+            document.getElementById('preview').style.transform = 'scale(' + zoom + ')';
+            log('', '', 'statusBar2');
+        }
+        window.clearUpload = clearUpload;
+
+        // 默认示例
+        document.getElementById('codeInput').value = 'flowchart LR\n    A[开始] --> B{判断条件}\n    B -->|条件A| C[处理A]\n    B -->|条件B| D[处理B]\n    C --> E[结束]\n    D --> E';
+
+        // 初始化显示200%
+        setZoom();
+
+        // 全局暴露
+        window.doPreview = doPreview;
+        window.doDownloadSVG = doDownloadSVG;
+        window.doDownloadPNG = doDownloadPNG;
+        window.doClear = doClear;
+        window.zoomIn = zoomIn;
+        window.zoomOut = zoomOut;
+        window.zoomReset = zoomReset;
+
+        // 快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') { e.preventDefault(); doPreview(); }
+        });
+    })();
+    </script>
+</body>
+</html>

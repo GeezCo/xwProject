@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>献微系统 - 线框图主题预览</title>
+<style>
+  :root, [data-theme="dark"] {
+    --bg-page: #0a1628; --bg-panel: rgba(0,61,107,0.5); --bg-panel-strong: rgba(0,61,107,0.8);
+    --bg-card: rgba(0,0,0,0.2); --bg-card-strong: rgba(0,0,0,0.3); --bg-btn-primary: linear-gradient(180deg,#009afb,#004d7e);
+    --color-primary: #009afb; --color-accent: #00bcf9; --color-title: #fba700;
+    --color-text: #cdcdcd; --color-text-secondary: #888; --color-text-strong: #fff;
+    --color-btn-text: #fff; --border-color: #009afb; --border-color-light: #013a68;
+    --shadow-card: none; --shadow-panel: none;
+  }
+  [data-theme="light"] {
+    --bg-page: #eef1f6; --bg-panel: #ffffff; --bg-panel-strong: #ffffff;
+    --bg-card: #f7f8fa; --bg-card-strong: #f0f2f5; --bg-btn-primary: #1a73e8;
+    --color-primary: #1a73e8; --color-accent: #1a73e8; --color-title: #d48806;
+    --color-text: #333333; --color-text-secondary: #999; --color-text-strong: #1a1a1a;
+    --color-btn-text: #fff; --border-color: #e0e0e0; --border-color-light: #d0d0d0;
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.08); --shadow-panel: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Microsoft YaHei','PingFang SC',sans-serif; background: var(--bg-page); min-height:100vh; transition: background .3s; }
+  .top-bar { display:flex; justify-content:space-between; align-items:center; padding:20px 40px; background:var(--bg-panel-strong); border-bottom:1px solid var(--border-color); box-shadow:var(--shadow-panel); }
+  .top-bar h1 { color:var(--color-accent); font-size:22px; }
+  .top-bar .info { color:var(--color-text-secondary); font-size:13px; }
+  .theme-toggle { display:flex; align-items:center; gap:10px; }
+  .theme-toggle label { color:var(--color-text); font-size:14px; cursor:pointer; }
+  .theme-toggle .switch { position:relative; width:56px; height:28px; cursor:pointer; }
+  .theme-toggle .switch input { display:none; }
+  .theme-toggle .slider { position:absolute; inset:0; background:var(--border-color-light); border-radius:14px; transition:.3s; border:1px solid var(--border-color); }
+  .theme-toggle .slider::before { content:''; position:absolute; width:22px; height:22px; left:3px; top:2px; background:var(--color-accent); border-radius:50%; transition:.3s; }
+  .theme-toggle input:checked + .slider::before { transform:translateX(26px); }
+  .container { max-width:1200px; margin:40px auto; padding:0 20px; }
+  .page-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:30px; }
+  .page-card { background:var(--bg-panel); border:1px solid var(--border-color); border-radius:12px; overflow:hidden; box-shadow:var(--shadow-card); transition:all .3s; cursor:pointer; text-decoration:none; }
+  .page-card:hover { transform:translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); border-color:var(--color-primary); }
+  .page-card .preview { height:200px; overflow:hidden; position:relative; }
+  .page-card .preview iframe { width:200%; height:200%; transform:scale(0.5); transform-origin:top left; pointer-events:none; border:none; }
+  .page-card .card-info { padding:16px 20px; border-top:1px solid var(--border-color-light); }
+  .page-card .card-title { color:var(--color-title); font-size:16px; font-weight:bold; margin-bottom:6px; }
+  .page-card .card-desc { color:var(--color-text-secondary); font-size:13px; line-height:1.5; }
+  .section-title { color:var(--color-accent); font-size:18px; font-weight:bold; padding-left:12px; border-left:3px solid var(--color-primary); }
+  .color-table { width:100%; margin-top:20px; border-collapse:collapse; }
+  .color-table th { background:var(--bg-panel-strong); color:var(--color-accent); padding:10px 16px; text-align:left; font-size:13px; border:1px solid var(--border-color-light); }
+  .color-table td { padding:8px 16px; color:var(--color-text); font-size:13px; border:1px solid var(--border-color-light); background:var(--bg-card); }
+  .swatch { display:inline-block; width:18px; height:18px; border-radius:4px; vertical-align:middle; margin-right:8px; border:1px solid rgba(128,128,128,0.3); }
+  .badge { display:inline-block; padding:2px 10px; border-radius:4px; font-size:12px; margin:2px; }
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div>
+    <h1>献微系统 - 线框图主题预览</h1>
+    <div class="info">点击卡片查看各页面详细线框图，支持实时切换暗色/亮色主题</div>
+  </div>
+  <div class="theme-toggle">
+    <label>暗色</label>
+    <label class="switch"><input type="checkbox" id="themeSwitch" onchange="toggleTheme()"><span class="slider"></span></label>
+    <label>亮色</label>
+  </div>
+</div>
+<div class="container">
+  <div class="section-title">页面线框图</div>
+  <div class="page-grid">
+    <a class="page-card" href="01-login.html">
+      <div class="preview"><iframe src="01-login.html"></iframe></div>
+      <div class="card-info">
+        <div class="card-title">01 - 登录页面</div>
+        <div class="card-desc">Login.vue — 用户身份认证入口，账号密码登录表单</div>
+      </div>
+    </a>
+    <a class="page-card" href="02-home.html">
+      <div class="preview"><iframe src="02-home.html"></iframe></div>
+      <div class="card-info">
+        <div class="card-title">02 - 主页框架</div>
+        <div class="card-desc">Home.vue — 导航菜单 + 主题切换 + 路由视图容器</div>
+      </div>
+    </a>
+    <a class="page-card" href="03-search.html">
+      <div class="preview"><iframe src="03-search.html"></iframe></div>
+      <div class="card-info">
+        <div class="card-title">03 - 搜索结果页面</div>
+        <div class="card-desc">searchResult.vue — 搜索/筛选/目录/列表/详情/抽取</div>
+      </div>
+    </a>
+    <a class="page-card" href="04-fusion.html">
+      <div class="preview"><iframe src="04-fusion.html"></iframe></div>
+      <div class="card-info">
+        <div class="card-title">04 - 报文融合结果页面</div>
+        <div class="card-desc">fusionResult.vue — 多篇报文融合生成综合报告</div>
+      </div>
+    </a>
+    <a class="page-card" href="06-数据统计看板页面.html">
+      <div class="preview"><iframe src="06-数据统计看板页面.html"></iframe></div>
+      <div class="card-info">
+        <div class="card-title">06 - 数据统计看板</div>
+        <div class="card-desc">Dashboard.vue — 核心指标/图表/批量抽取/融合报告一览</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="section-title" style="margin-top:40px;">色值速查表</div>
+  <table class="color-table">
+    <thead>
+      <tr><th>语义</th><th>暗色主题</th><th>亮色主题</th></tr>
+    </thead>
+    <tbody id="colorTableBody"></tbody>
+  </table>
+</div>
+<script>
+const colors = [
+  ['页面背景','#0a1628','#eef1f6'],['面板背景','rgba(0,61,107,0.5)','#ffffff'],['面板加强','rgba(0,61,107,0.8)','#ffffff'],
+  ['卡片背景','rgba(0,0,0,0.2)','#f7f8fa'],['输入框背景','rgba(0,0,0,0.5)','#ffffff'],['菜单背景','#013a68','#f0f2f5'],
+  ['菜单激活','渐变#013a68→#011d34','#1a73e8'],['按钮主色','渐变#009afb→#004d7e','#1a73e8'],
+  ['主色','#009afb','#1a73e8'],['强调色','#00bcf9','#1a73e8'],['标题色','#fba700','#d48806'],
+  ['正文色','#cdcdcd','#333333'],['辅助色','#888888','#999999'],['高亮文字','#ffffff','#1a1a1a'],
+  ['标签文字(蓝)','#00bcf9','#1a73e8'],['标签文字(橙)','#fba700','#d48806'],
+  ['边框主色','#009afb','#e0e0e0'],['边框浅色','#013a68','#d0d0d0'],
+  ['卡片阴影','无','0 1px 3px rgba(0,0,0,0.08)'],['面板阴影','无','0 2px 8px rgba(0,0,0,0.06)']
+];
+const tbody = document.getElementById('colorTableBody');
+colors.forEach(([name,dark,light]) => {
+  const r = document.createElement('tr');
+  r.innerHTML = `<td>${name}</td><td><span class="swatch" style="background:${dark.startsWith('渐变')?'#013a68':dark}"></span>${dark}</td><td><span class="swatch" style="background:${light.startsWith('渐变')?'#1a73e8':light}"></span>${light}</td>`;
+  tbody.appendChild(r);
+});
+function toggleTheme() {
+  const t = document.getElementById('themeSwitch').checked ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelectorAll('iframe').forEach(f => { try { f.contentDocument.documentElement.setAttribute('data-theme', t); } catch(e){} });
+}
+</script>
+</body>
+</html>

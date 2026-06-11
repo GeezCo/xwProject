@@ -1,0 +1,18 @@
+[Unit]
+Description=Xianwei Backend Service
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+User=yinbanghu
+WorkingDirectory=/home/yinbanghu/liuyukun/xianwei/后端
+EnvironmentFile=/home/yinbanghu/liuyukun/xianwei/.env
+ExecStart=/home/yinbanghu/liuyukun/jdk8u492-b09/bin/java -Xms512m -Xmx2g -XX:+UseG1GC -jar uygur-project-0.0.1-SNAPSHOT.jar --spring.config.location=application-prod.yml
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

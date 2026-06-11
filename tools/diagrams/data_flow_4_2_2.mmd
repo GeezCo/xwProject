@@ -1,0 +1,21 @@
+%% 图4-2 系统数据流示意图（对应 04_CSCI体系结构设计.md §4.2.2）
+%% 渲染: mmdc -i data_flow_4_2_2.mmd -o data_flow_4_2_2.svg -b white -w 1400 --scale 2
+flowchart LR
+    classDef box fill:#ffffff,stroke:#333333,stroke-width:2px,font-size:16px,color:#000000
+
+    FE["前端<br/>Vue3"]:::box
+    BE["后端<br/>Spring Boot"]:::box
+    AL["算法服务<br/>Flask"]:::box
+    LLM["LLM API<br/>Paratera"]:::box
+    DB["MySQL 8.0"]:::box
+    NLU["RexUniNlu<br/>分类服务"]:::box
+
+    FE -->|"HTTP请求"| BE
+    BE -->|"JSON响应"| FE
+    BE -->|"HTTP请求"| AL
+    AL -->|"JSON响应"| BE
+    AL -->|"OpenAI SDK"| LLM
+    LLM -->|"JSON响应"| AL
+    BE -->|"JDBC"| DB
+    DB -->|"ResultSet"| BE
+    AL -->|"HTTP"| NLU

@@ -1,0 +1,64 @@
+{
+  "code": 1,
+  "data": {
+    "originTextId": 9754,
+    "entities": {
+      "部队": [],
+      "人物": [],
+      "组织": [],
+      "火炮": [],
+      "战机": [],
+      "军舰": [],
+      "武器": [
+        "日",
+        "澳",
+        "美"
+      ]
+    },
+    "totalEvents": 2,
+    "extractionTime": "2026-04-23T22:28:13",
+    "id": 125,
+    "events": [
+      {
+        "event_id": 1,
+        "subject": [
+          "日本",
+          "美国",
+          "澳大利亚"
+        ],
+        "action": "联合举行防空演习",
+        "location": [
+          "东海海域"
+        ],
+        "original_text": "2022 年 4 月 7 日，日本、美国和澳大利亚三国在东海海域联合举行防空演习。",
+        "time": "2022 年 4 月 7 日",
+        "labels": [],
+        "paragraph_id": 0
+      },
+      {
+        "event_id": 2,
+        "subject": [
+          "日",
+          "美",
+          "澳"
+        ],
+        "action": "重视安全局势",
+        "location": [
+          "印太地区"
+        ],
+        "original_text": "分析认为，此举显示出日美澳对印太地区安全局势的重视，也是三国在安全防务领域深化合作的重要举措。",
+        "time": "",
+        "labels": [
+          "武器"
+        ],
+        "paragraph_id": 1
+      }
+    ],
+    "status": "completed",
+    "labels": [
+      "武器"
+    ]
+  },
+  "msg": "success",
+  "flag": "true"
+}
