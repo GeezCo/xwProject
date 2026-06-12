@@ -129,3 +129,18 @@ rag:
     vector-weight: 0.7
     rrf-k: 60
     default-top-k: 10
+  ocr:
+    enabled: true
+    thread-pool-size: 4
+    tesseract:
+      datapath: /usr/share/tesseract-ocr/4.00/tessdata
+      language: chi_sim+eng
+      page-seg-mode: 1
+      ocr-engine-mode: 1
+    image:
+      enable-ocr: true
+      max-size-mb: 10
+  parser:
+    max-file-size-mb: 50
+    temp-dir: /tmp/xianwei-uploads
+    strict-docx-only: true
