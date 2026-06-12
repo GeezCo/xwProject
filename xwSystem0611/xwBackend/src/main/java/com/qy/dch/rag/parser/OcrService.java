@@ -4,7 +4,6 @@ import com.qy.dch.rag.config.OcrProperties;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -16,21 +15,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 @Slf4j
 @Service
 public class OcrService {
 
     private final OcrProperties ocrProperties;
-    private final Executor ocrExecutor;
-    private final Tesseract tesseract;
+    private final ThreadLocal<Tesseract> tesseractThreadLocal;
 
-    public OcrService(OcrProperties ocrProperties,
-                      @Qualifier("ocrExecutor") Executor ocrExecutor) {
+    public OcrService(OcrProperties ocrProperties) {
         this.ocrProperties = ocrProperties;
-        this.ocrExecutor = ocrExecutor;
-        this.tesseract = initTesseract();
+        this.tesseractThreadLocal = ThreadLocal.withInitial(this::initTesseract);
     }
 
     private Tesseract initTesseract() {
@@ -78,7 +73,8 @@ public class OcrService {
 
     private String doOcr(BufferedImage image) {
         try {
-            String text = tesseract.doOCR(image);
+            Tesseract tess = tesseractThreadLocal.get();
+            String text = tess.doOCR(image);
             return text != null ? text.trim() : "";
         } catch (TesseractException e) {
             log.error("Tesseract OCR 识别失败", e);
@@ -92,7 +88,7 @@ public class OcrService {
     public boolean isAvailable() {
         try {
             BufferedImage testImage = new BufferedImage(100, 30, BufferedImage.TYPE_INT_RGB);
-            tesseract.doOCR(testImage);
+            tesseractThreadLocal.get().doOCR(testImage);
             return true;
         } catch (Throwable e) {
             return false;
