@@ -36,11 +36,10 @@ public class DocxTableParserService {
             int tableCount = 0;
 
             for (XWPFTable table : document.getTables()) {
-                if (tableCount > 0) {
-                    tableContent.append("\n\n");
-                }
-                tableContent.append(extractTable(table));
                 tableCount++;
+                tableContent.append("\n[表格").append(tableCount).append("]\n");
+                tableContent.append(extractTable(table));
+                tableContent.append("\n[/表格").append(tableCount).append("]\n");
             }
 
             Map<String, Object> metadata = new HashMap<>();
