@@ -1,6 +1,5 @@
 package com.qy.dch.rag.parser;
 
-import com.qy.dch.rag.config.DocumentParserProperties;
 import com.qy.dch.rag.config.OcrProperties;
 import com.qy.dch.rag.model.ParsedDocument;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,30 +29,28 @@ public class DocxMixedParserService {
 
     private final OcrService ocrService;
     private final OcrProperties ocrProperties;
-    private final DocumentParserProperties parserProperties;
 
     public DocxMixedParserService(
             OcrService ocrService,
-            OcrProperties ocrProperties,
-            DocumentParserProperties parserProperties) {
+            OcrProperties ocrProperties) {
         this.ocrService = ocrService;
         this.ocrProperties = ocrProperties;
-        this.parserProperties = parserProperties;
     }
 
     /**
-     * 解析 DOCX 文件
+     * 解析图文混排 DOCX 文件
      *
      * @param filePath DOCX 文件路径
      * @return 解析结果
      * @throws IOException 解析失败
      */
-    public ParsedDocument parse(Path filePath) throws IOException {
+    public ParsedDocument parseMixedDocx(String filePath) throws IOException {
         long startTime = System.currentTimeMillis();
+        Path path = Paths.get(filePath);
         int imageCount = 0;
-        int ocrSuccessCount = 0;
+        int ocrTextLength = 0;
 
-        try (InputStream fis = new FileInputStream(filePath.toFile());
+        try (InputStream fis = new FileInputStream(path.toFile());
              XWPFDocument document = new XWPFDocument(fis)) {
 
             StringBuilder content = new StringBuilder();
@@ -78,35 +77,30 @@ public class DocxMixedParserService {
                                     imageCount++;
                                     String ocrText = extractImageText(picture);
                                     if (ocrText != null && !ocrText.isEmpty()) {
-                                        content.append("[图片OCR文本] ").append(ocrText).append("\n");
-                                        ocrSuccessCount++;
+                                        content.append("\n[图片内容]\n").append(ocrText).append("\n[/图片内容]\n\n");
+                                        ocrTextLength += ocrText.length();
                                     }
                                 }
                             }
                         }
                     }
-                } else if (element instanceof XWPFTable) {
-                    // 暂时跳过表格，由 DocxTableParserService 专门处理
-                    // 或者可以提取表格内的文本
-                    XWPFTable table = (XWPFTable) element;
-                    extractTableText(table, content);
                 }
             }
 
             // 构建元数据
             Map<String, Object> metadata = new HashMap<>();
-            metadata.put("filePath", filePath.toString());
-            metadata.put("fileName", filePath.getFileName().toString());
+            metadata.put("filePath", path.toString());
+            metadata.put("fileName", path.getFileName().toString());
             metadata.put("paragraphCount", document.getParagraphs().size());
             metadata.put("imageCount", imageCount);
-            metadata.put("ocrSuccessCount", ocrSuccessCount);
+            metadata.put("ocrTextLength", ocrTextLength);
             metadata.put("ocrEnabled", ocrEnabled);
             metadata.put("contentLength", content.length());
             metadata.put("parseTime", System.currentTimeMillis() - startTime);
 
-            log.info("DOCX解析完成: file={}, paragraphs={}, images={}, ocrSuccess={}, time={}ms",
-                    filePath.getFileName(), document.getParagraphs().size(),
-                    imageCount, ocrSuccessCount, System.currentTimeMillis() - startTime);
+            log.info("DOCX解析完成: file={}, paragraphs={}, images={}, ocrTextLength={}, time={}ms",
+                    path.getFileName(), document.getParagraphs().size(),
+                    imageCount, ocrTextLength, System.currentTimeMillis() - startTime);
 
             return ParsedDocument.builder()
                     .id("docx_mixed_" + UUID.randomUUID().toString().replace("-", "").substring(0, 16))
@@ -116,6 +110,41 @@ public class DocxMixedParserService {
                     .metadata(metadata)
                     .build();
         }
+    }
+
+    /**
+     * 提取 DOCX 中所有嵌入图片的字节数据
+     *
+     * @param filePath DOCX 文件路径
+     * @return 图片字节列表
+     * @throws IOException 读取失败
+     */
+    public List<byte[]> extractImages(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        List<byte[]> images = new ArrayList<>();
+
+        try (InputStream fis = new FileInputStream(path.toFile());
+             XWPFDocument document = new XWPFDocument(fis)) {
+
+            for (IBodyElement element : document.getBodyElements()) {
+                if (element instanceof XWPFParagraph) {
+                    XWPFParagraph paragraph = (XWPFParagraph) element;
+                    List<XWPFRun> runs = paragraph.getRuns();
+                    if (runs != null) {
+                        for (XWPFRun run : runs) {
+                            List<XWPFPicture> pictures = run.getEmbeddedPictures();
+                            if (pictures != null) {
+                                for (XWPFPicture picture : pictures) {
+                                    images.add(picture.getPictureData().getData());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return images;
     }
 
     /**
@@ -146,24 +175,6 @@ public class DocxMixedParserService {
             // OCR 失败时降级：记录日志但不中断解析流程
             log.warn("图片OCR识别失败，跳过该图片: {}", e.getMessage());
             return "";
-        }
-    }
-
-    /**
-     * 提取表格文本（简单版本）
-     *
-     * @param table XWPF表格对象
-     * @param content 内容累加器
-     */
-    private void extractTableText(XWPFTable table, StringBuilder content) {
-        for (XWPFTableRow row : table.getRows()) {
-            for (XWPFTableCell cell : row.getTableCells()) {
-                String cellText = cell.getText();
-                if (cellText != null && !cellText.trim().isEmpty()) {
-                    content.append(cellText).append("\t");
-                }
-            }
-            content.append("\n");
         }
     }
 

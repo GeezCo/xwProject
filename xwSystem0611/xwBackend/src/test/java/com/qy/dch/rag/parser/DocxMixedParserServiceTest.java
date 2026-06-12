@@ -1,6 +1,5 @@
 package com.qy.dch.rag.parser;
 
-import com.qy.dch.rag.config.DocumentParserProperties;
 import com.qy.dch.rag.config.OcrProperties;
 import com.qy.dch.rag.model.ParsedDocument;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,9 +31,6 @@ class DocxMixedParserServiceTest {
     private OcrProperties ocrProps;
 
     @Mock
-    private DocumentParserProperties docProps;
-
-    @Mock
     private OcrProperties.ImageProperties imageOcrProps;
 
     private DocxMixedParserService parserService;
@@ -46,7 +42,7 @@ class DocxMixedParserServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         when(ocrProps.getImage()).thenReturn(imageOcrProps);
-        parserService = new DocxMixedParserService(ocrService, ocrProps, docProps);
+        parserService = new DocxMixedParserService(ocrService, ocrProps);
     }
 
     @Test
@@ -58,7 +54,7 @@ class DocxMixedParserServiceTest {
         Path testFile = createSimpleDocx();
 
         // When
-        ParsedDocument result = parserService.parse(testFile);
+        ParsedDocument result = parserService.parseMixedDocx(testFile.toAbsolutePath().toString());
 
         // Then
         assertNotNull(result);
@@ -69,7 +65,7 @@ class DocxMixedParserServiceTest {
 
         Map<String, Object> metadata = result.getMetadata();
         assertNotNull(metadata);
-        assertEquals(testFile.toString(), metadata.get("filePath"));
+        assertEquals(testFile.toAbsolutePath().toString(), metadata.get("filePath"));
 
         // Verify OCR was not called since no images present
         verify(ocrService, never()).recognizeText(any());
@@ -86,7 +82,7 @@ class DocxMixedParserServiceTest {
         Path testFile = createDocxWithImage();
 
         // When
-        ParsedDocument result = parserService.parse(testFile);
+        ParsedDocument result = parserService.parseMixedDocx(testFile.toAbsolutePath().toString());
 
         // Then
         assertNotNull(result);
@@ -103,7 +99,7 @@ class DocxMixedParserServiceTest {
         Path testFile = createDocxWithImage();
 
         // When
-        ParsedDocument result = parserService.parse(testFile);
+        ParsedDocument result = parserService.parseMixedDocx(testFile.toAbsolutePath().toString());
 
         // Then
         assertNotNull(result);
@@ -122,7 +118,7 @@ class DocxMixedParserServiceTest {
         Path testFile = createDocxWithImage();
 
         // When
-        ParsedDocument result = parserService.parse(testFile);
+        ParsedDocument result = parserService.parseMixedDocx(testFile.toAbsolutePath().toString());
 
         // Then: Should gracefully degrade, continue parsing text
         assertNotNull(result);
