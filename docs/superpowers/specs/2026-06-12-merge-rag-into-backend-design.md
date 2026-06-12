@@ -115,7 +115,7 @@
 |---|---|---|
 | `OcrProperties` | `com.qy.dch.rag.config.OcrProperties` | 前缀改 `rag.ocr` |
 | `DocumentParserProperties` | `com.qy.dch.rag.config.DocumentParserProperties` | 前缀改 `rag.parser` |
-| `AsyncConfiguration` | 合并到现有 `AsyncConfiguration` | 新增 `ocrExecutor` 线程池 bean |
+| `AsyncConfiguration` | 新建 `com.qy.dch.rag.config.AsyncConfiguration` | xwBackend 当前无此类；新建并提供 `ocrExecutor` 线程池 bean |
 
 ### 3.5 改造点的兼容性
 
@@ -143,6 +143,7 @@
 | `/api/rag/document/upload` | POST | 新增（移植） | 上传 DOCX，解析→分块→向量化→索引 |
 | `/api/rag/document/upload/mixed` | POST | 新增（移植） | 上传含图片 DOCX，调 OCR 提取图片文字 |
 | `/api/rag/document/parse` | POST | 新增（移植） | 仅解析返回文本，不入库（调试用） |
+| `/api/rag/document/status/{docId}` | GET | 新增 | 查询单次上传任务的索引状态（pending/indexed/failed） |
 
 ### 4.2 统一返回结构
 
@@ -313,12 +314,12 @@ rag:
 ### Stage 2：移植解析层（不接业务）
 4. 新建包 `com.qy.dch.rag.parser`，移植 4 个 service
 5. 新建包 `com.qy.dch.rag.config`，移植 2 个配置类
-6. 复用现有 `AsyncConfiguration`，新增名为 `ocrExecutor` 的线程池 bean
+6. 新建 `com.qy.dch.rag.config.AsyncConfiguration`，提供名为 `ocrExecutor` 的线程池 bean（xwBackend 当前无 Async 配置）
 7. `application.yml` 增加 `rag.ocr` 与 `rag.parser` 配置块
 8. 编译通过，启动 xwBackend，确认无 bean 冲突
 
 ### Stage 3：接入 RAG 主管道
-9. 新建 `com.qy.dch.controller.DocumentController`，实现 3 个接口
+9. 新建 `com.qy.dch.controller.DocumentController`，实现 4 个接口（upload / upload/mixed / parse / status）
 10. 新建 `RagDocumentMapper` + 创建 `rag_document` 表
 11. 在 `RagServiceImpl` 增加 `uploadAndIndex(MultipartFile)` 方法
 12. 错误处理：文件 > 50MB 拒绝；OCR 失败降级为只索引文本；ES 写失败回写 `status=failed`
