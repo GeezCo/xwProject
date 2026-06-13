@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qy.dch.mapper.RagDocumentMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="RagDocumentResultMap" type="com.qy.dch.rag.model.RagDocument">
+        <id column="doc_id" property="docId"/>
+        <result column="original_filename" property="originalFilename"/>
+        <result column="file_path" property="filePath"/>
+        <result column="content_type" property="contentType"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="upload_time" property="uploadTime"/>
+        <result column="parse_status" property="parseStatus"/>
+        <result column="parse_time" property="parseTime"/>
+        <result column="chunk_count" property="chunkCount"/>
+        <result column="metadata" property="metadata"/>
+        <result column="error_message" property="errorMessage"/>
+    </resultMap>
+
+    <!-- 插入文档记录 -->
+    <insert id="insertDocument" parameterType="com.qy.dch.rag.model.RagDocument">
+        INSERT INTO rag_document (
+            doc_id,
+            original_filename,
+            file_path,
+            content_type,
+            file_size,
+            upload_time,
+            parse_status,
+            parse_time,
+            chunk_count,
+            metadata,
+            error_message
+        ) VALUES (
+            #{docId},
+            #{originalFilename},
+            #{filePath},
+            #{contentType},
+            #{fileSize},
+            #{uploadTime},
+            #{parseStatus},
+            #{parseTime},
+            #{chunkCount},
+            #{metadata},
+            #{errorMessage}
+        )
+    </insert>
+
+    <!-- 根据doc_id查询文档 -->
+    <select id="selectByDocId" parameterType="string" resultMap="RagDocumentResultMap">
+        SELECT
+            doc_id,
+            original_filename,
+            file_path,
+            content_type,
+            file_size,
+            upload_time,
+            parse_status,
+            parse_time,
+            chunk_count,
+            metadata,
+            error_message
+        FROM rag_document
+        WHERE doc_id = #{docId}
+    </select>
+
+    <!-- 更新文档解析状态 -->
+    <update id="updateParseStatus">
+        UPDATE rag_document SET
+            parse_status = #{parseStatus},
+            parse_time = #{parseTime},
+            chunk_count = #{chunkCount},
+            error_message = #{errorMessage}
+        WHERE doc_id = #{docId}
+    </update>
+
+</mapper>
