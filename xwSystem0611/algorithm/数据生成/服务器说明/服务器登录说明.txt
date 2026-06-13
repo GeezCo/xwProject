@@ -1,6 +1,0 @@
-ip:  36.103.234.242
-端口：2327
-用户名：ubuntu
-密钥名称（Public Key）：mecs-bd71de15.id
-
-登陆后可执行sudo su -进入root账户
