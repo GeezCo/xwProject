@@ -238,7 +238,27 @@ Step 4: 结果组装 → 构建目标列表表格 + 输出融合报告
 
 ---
 
-### 四、用户认证模块
+### 四、RAG 知识库模块（已合并至 xwBackend）
+
+#### 后端接口 (RagController + DocumentController)
+| 路径 | 方法 | 功能 |
+|------|------|------|
+| `/api/rag/index/status` | GET | 索引状态 |
+| `/api/rag/index/trigger` | POST | 触发批量索引 |
+| `/api/rag/index/log` | GET | 索引日志 |
+| `/api/rag/search` | POST | 混合检索（BM25 + 向量 RRF） |
+| `/api/rag/document/upload` | POST | 上传 DOCX 索引 |
+| `/api/rag/document/upload/mixed` | POST | 上传含图片 DOCX（含 OCR） |
+| `/api/rag/document/parse` | POST | 仅解析（调试用） |
+| `/api/rag/document/status/{docId}` | GET | 查询上传任务状态 |
+
+#### 存储
+- ES `xianwei_docs` 索引，dense_vector 1024 维
+- MySQL `rag_document` 表记录上传元数据
+
+---
+
+### 五、用户认证模块
 
 #### 前端组件
 - `Login.vue` - 登录页面
