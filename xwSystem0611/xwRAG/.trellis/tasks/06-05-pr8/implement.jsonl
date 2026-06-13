@@ -1,7 +1,0 @@
-{"type":"spec","path":"src/main/java/com/intel/rag/model/SearchRequest.java"}
-{"type":"spec","path":"src/main/java/com/intel/rag/model/SearchResult.java"}
-{"type":"spec","path":"src/main/java/com/intel/rag/config/RetrievalProperties.java"}
-{"type":"spec","path":"src/main/java/com/intel/rag/service/HybridSearchService.java"}
-{"type":"spec","path":"src/test/java/com/intel/rag/service/HybridSearchServiceTest.java"}
-{"type":"config","path":"src/main/resources/application.yml"}
-{"type":"doc","path":"PROGRESS.md"}
