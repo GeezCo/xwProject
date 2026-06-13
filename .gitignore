@@ -12,3 +12,14 @@
 # Python
 __pycache__/
 *.py[cod]
+
+# 大型二进制文件（防止误提交超出 GitHub 100MB 限制）
+*.exe
+*.zip
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+*.dmg
+*.iso
+*.7z
