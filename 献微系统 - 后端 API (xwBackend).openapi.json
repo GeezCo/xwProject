@@ -1,0 +1,3002 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "献微系统 - 后端 API (xwBackend)",
+    "description": "献微系统后端接口文档。包含 9 个模块：\n- 报文管理 (UygurController)\n- 分类管理 (CategoryController)\n- 属性抽取 (ExtractionController)\n- 报文融合 (FusionController)\n- 每日要情/事件分析 (EventAnalysisController)\n- RAG 语义检索 (RagController)\n- 数据统计看板 (DashboardController)\n- 数据库管理 (DatabaseController)\n- 测试/调试 (TestController)\n\n基于 Spring Boot 2.7.18，全部 Controller 基于源码静态导出，未经运行验证。\n",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "报文管理"
+    },
+    {
+      "name": "分类管理"
+    },
+    {
+      "name": "属性抽取"
+    },
+    {
+      "name": "报文融合"
+    },
+    {
+      "name": "每日要情"
+    },
+    {
+      "name": "RAG检索"
+    },
+    {
+      "name": "数据看板"
+    },
+    {
+      "name": "数据库管理"
+    },
+    {
+      "name": "测试"
+    },
+    {
+      "name": "RAG 文档上传"
+    },
+    {
+      "name": "RAG 索引管理"
+    },
+    {
+      "name": "RAG 检索"
+    }
+  ],
+  "paths": {
+    "/uygur/config": {
+      "get": {
+        "summary": "获取系统配置（MinIO地址等）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939907-run"
+      }
+    },
+    "/uygur/savetext": {
+      "get": {
+        "summary": "批量导入文本数据（旧版，无响应体）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939908-run"
+      }
+    },
+    "/uygur/category": {
+      "get": {
+        "summary": "获取文本分类列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939909-run"
+      },
+      "post": {
+        "summary": "新增分类（通用版本，支持一级和二级）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "typeName": {
+                    "type": "string"
+                  },
+                  "parentId": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                },
+                "x-apifox-orders": [
+                  "typeName",
+                  "parentId"
+                ],
+                "x-apifox-ignore-properties": []
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939910-run"
+      }
+    },
+    "/uygur/detail/{sid}": {
+      "get": {
+        "summary": "获取单个报文详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939911-run"
+      }
+    },
+    "/uygur/getTextList": {
+      "post": {
+        "summary": "分页查询文本列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetListRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939912-run"
+      }
+    },
+    "/uygur/resetExtracted": {
+      "post": {
+        "summary": "重置所有报文的抽取状态为未抽取",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939913-run"
+      }
+    },
+    "/uygur/addCategory": {
+      "post": {
+        "summary": "新增二级分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCategoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939914-run"
+      }
+    },
+    "/uygur/category/{categoryId}": {
+      "put": {
+        "summary": "修改分类名称",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newTypeName": {
+                    "type": "string"
+                  }
+                },
+                "x-apifox-orders": [
+                  "newTypeName"
+                ],
+                "x-apifox-ignore-properties": []
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939915-run"
+      },
+      "delete": {
+        "summary": "删除分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939916-run"
+      }
+    },
+    "/uygur/category/{categoryId}/withTexts": {
+      "delete": {
+        "summary": "删除分类及其下所有报文",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939917-run"
+      }
+    },
+    "/uygur/category/batchDelete": {
+      "post": {
+        "summary": "批量删除分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939918-run"
+      }
+    },
+    "/uygur/importFromJsonl": {
+      "post": {
+        "summary": "从JSONL文件批量导入报文（按 sendUnitName 自动分类）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "example": ""
+                  },
+                  "defaultCategoryId": {
+                    "type": "integer",
+                    "default": 2,
+                    "example": 2
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939919-run"
+      }
+    },
+    "/uygur/importFromJsonlWithImages": {
+      "post": {
+        "summary": "从JSONL文件导入报文（含图片）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "example": ""
+                  },
+                  "parentCategoryName": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "categoryName": {
+                    "type": "string",
+                    "example": ""
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "file",
+                  "parentCategoryName",
+                  "categoryName"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939920-run"
+      }
+    },
+    "/uygur/text/{sid}": {
+      "delete": {
+        "summary": "删除报文",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939921-run"
+      }
+    },
+    "/uygur/text/batchDelete": {
+      "post": {
+        "summary": "批量删除报文",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939922-run"
+      }
+    },
+    "/uygur/text/updateByOldType": {
+      "post": {
+        "summary": "按旧分类ID批量更新报文分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldTypeId": {
+                    "type": "integer"
+                  },
+                  "newTypeId": {
+                    "type": "integer"
+                  }
+                },
+                "x-apifox-orders": [
+                  "oldTypeId",
+                  "newTypeId"
+                ],
+                "x-apifox-ignore-properties": []
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939923-run"
+      }
+    },
+    "/api/category/tree": {
+      "get": {
+        "summary": "获取完整分类树",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "分类管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "分类管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939924-run"
+      }
+    },
+    "/api/category/leafs": {
+      "get": {
+        "summary": "获取所有叶子节点",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "分类管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "分类管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939925-run"
+      }
+    },
+    "/api/category/create": {
+      "post": {
+        "summary": "新增分类节点",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "分类管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "分类管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939926-run"
+      }
+    },
+    "/api/category/update": {
+      "put": {
+        "summary": "更新分类节点（重命名、修改描述）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "分类管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "分类管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939927-run"
+      }
+    },
+    "/api/category/move": {
+      "post": {
+        "summary": "移动分类节点",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "分类管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryMoveRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "分类管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939928-run"
+      }
+    },
+    "/api/category/delete/{categoryId}": {
+      "delete": {
+        "summary": "删除分类节点（级联删除子节点）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "分类管理"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "分类管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939929-run"
+      }
+    },
+    "/api/category/detail/{categoryId}": {
+      "get": {
+        "summary": "获取分类节点详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "分类管理"
+        ],
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "分类管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939930-run"
+      }
+    },
+    "/extraction/extract": {
+      "post": {
+        "summary": "执行属性抽取（单条）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "属性抽取"
+        ],
+        "parameters": [
+          {
+            "name": "originTextId",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "force",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "属性抽取",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939931-run"
+      }
+    },
+    "/extraction/result/{originTextId}": {
+      "get": {
+        "summary": "查询抽取结果",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "属性抽取"
+        ],
+        "parameters": [
+          {
+            "name": "originTextId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "属性抽取",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939932-run"
+      }
+    },
+    "/extraction/batch/start": {
+      "post": {
+        "summary": "启动批量抽取任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "属性抽取"
+        ],
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "examples": [
+                "2026-06-01"
+              ]
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "examples": [
+                "2026-06-12"
+              ]
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "unextracted",
+                "all"
+              ],
+              "default": "unextracted"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "属性抽取",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939933-run"
+      }
+    },
+    "/extraction/batch/progress/{taskId}": {
+      "get": {
+        "summary": "查询批量抽取任务进度",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "属性抽取"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "属性抽取",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939934-run"
+      }
+    },
+    "/extraction/batch/stop/{taskId}": {
+      "post": {
+        "summary": "停止批量抽取任务",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "属性抽取"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "属性抽取",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939935-run"
+      }
+    },
+    "/api/fusion/create": {
+      "post": {
+        "summary": "创建融合报告（调用LLM）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文融合"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FusionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文融合",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939936-run"
+      }
+    },
+    "/api/fusion/save": {
+      "post": {
+        "summary": "保存融合报告到数据库",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文融合"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FusionDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文融合",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939937-run"
+      }
+    },
+    "/api/fusion/list": {
+      "get": {
+        "summary": "查询融合报告列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文融合"
+        ],
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文融合",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939938-run"
+      }
+    },
+    "/api/fusion/detail/{id}": {
+      "get": {
+        "summary": "查询融合报告详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文融合"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文融合",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939939-run"
+      }
+    },
+    "/api/fusion/export/pdf/{id}": {
+      "get": {
+        "summary": "导出融合报告为PDF（开发中）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文融合"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文融合",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939940-run"
+      }
+    },
+    "/api/fusion/export/word/{id}": {
+      "get": {
+        "summary": "导出融合报告为Word（开发中）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文融合"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 0,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文融合",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939941-run"
+      }
+    },
+    "/api/fusion/searchByTarget": {
+      "post": {
+        "summary": "根据目标名称搜索相关报文",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "报文融合"
+        ],
+        "parameters": [
+          {
+            "name": "targetName",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "examples": [
+                "第七舰队"
+              ]
+            }
+          },
+          {
+            "name": "maxReports",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文融合",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939942-run"
+      }
+    },
+    "/api/eventAnalysis/trigger": {
+      "post": {
+        "summary": "手动触发分析任务（异步）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "每日要情"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TriggerAnalysisRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "每日要情",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939943-run"
+      }
+    },
+    "/api/eventAnalysis/query": {
+      "post": {
+        "summary": "查询事件（按关键词筛选）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "每日要情"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventAnalysisQueryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "每日要情",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939944-run"
+      }
+    },
+    "/api/eventAnalysis/status": {
+      "get": {
+        "summary": "查询分析任务状态",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "每日要情"
+        ],
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "examples": [
+                "2026-06-12"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "每日要情",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939945-run"
+      }
+    },
+    "/api/rag/index/status": {
+      "get": {
+        "summary": "查询索引状态",
+        "deprecated": false,
+        "description": "返回 ES 索引是否存在、文档总数、最近一次索引时间等。",
+        "operationId": "getIndexStatus",
+        "tags": [
+          "RAG检索",
+          "RAG 索引管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": {
+                    "indexName": "xianwei_docs",
+                    "exists": true,
+                    "docCount": 1234,
+                    "lastIndexTime": "2026-06-13 12:00:00"
+                  }
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "RAG检索",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939946-run"
+      }
+    },
+    "/api/rag/search": {
+      "post": {
+        "summary": "混合检索",
+        "deprecated": false,
+        "description": "BM25 全文 + 向量语义 RRF 融合排序。hybrid=false 时仅向量检索。",
+        "operationId": "search",
+        "tags": [
+          "RAG检索",
+          "RAG 检索"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RagSearchRequest"
+              },
+              "example": {
+                "query": "北约军演",
+                "topK": 10,
+                "hybrid": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": [
+                    {
+                      "chunkId": "doc_abc_0",
+                      "docId": "doc_abc",
+                      "content": "命中片段...",
+                      "score": 0.875,
+                      "title": "标题",
+                      "publishTime": "2026-06-13"
+                    }
+                  ]
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "RAG检索",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939948-run"
+      }
+    },
+    "/api/rag/index/trigger": {
+      "post": {
+        "summary": "手动触发批量索引",
+        "deprecated": false,
+        "description": "按时间范围把 origin_text 表中的报文批量切片、向量化并写入 ES。日期格式 yyyy-MM-dd。",
+        "operationId": "triggerIndexing",
+        "tags": [
+          "RAG检索",
+          "RAG 索引管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RagIndexTriggerRequest"
+              },
+              "example": {
+                "startDate": "2026-06-01",
+                "endDate": "2026-06-13"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 200,
+                  "msg": "索引任务已提交",
+                  "data": {
+                    "taskId": "idx_20260613_120000"
+                  }
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "RAG检索",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939947-run"
+      }
+    },
+    "/api/rag/index/log": {
+      "get": {
+        "summary": "索引日志分页查询",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getIndexLog",
+        "tags": [
+          "RAG检索",
+          "RAG 索引管理"
+        ],
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "description": "页码，从 1 开始",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "每页条数",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": {
+                    "total": 50,
+                    "list": [
+                      {
+                        "id": 1,
+                        "taskId": "idx_20260613_120000",
+                        "startTime": "2026-06-13 12:00:00",
+                        "endTime": "2026-06-13 12:05:30",
+                        "status": "SUCCESS",
+                        "docCount": 120
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "RAG检索",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939949-run"
+      }
+    },
+    "/api/dashboard/overview": {
+      "get": {
+        "summary": "获取核心指标概览",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "数据看板"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "数据看板",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939950-run"
+      }
+    },
+    "/api/dashboard/categoryDistribution": {
+      "get": {
+        "summary": "获取分类分布统计",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "数据看板"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "数据看板",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939951-run"
+      }
+    },
+    "/api/dashboard/modalDistribution": {
+      "get": {
+        "summary": "获取模态类型分布统计",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "数据看板"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "数据看板",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939952-run"
+      }
+    },
+    "/api/dashboard/recentFusions": {
+      "get": {
+        "summary": "获取最近融合报告列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "数据看板"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "数据看板",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939953-run"
+      }
+    },
+    "/api/database/table/structure": {
+      "get": {
+        "summary": "获取表结构",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "数据库管理"
+        ],
+        "parameters": [
+          {
+            "name": "tableName",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "数据库管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939954-run"
+      }
+    },
+    "/api/database/field/add": {
+      "post": {
+        "summary": "新增字段",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "数据库管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFieldRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "数据库管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939955-run"
+      }
+    },
+    "/api/database/field/modify": {
+      "post": {
+        "summary": "修改字段",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "数据库管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyFieldRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "数据库管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939956-run"
+      }
+    },
+    "/api/database/field/delete": {
+      "post": {
+        "summary": "删除字段",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "数据库管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteFieldRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "数据库管理",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939957-run"
+      }
+    },
+    "/test/queryCategory": {
+      "get": {
+        "summary": "查询分类（编码调试）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "测试"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "测试",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939958-run"
+      }
+    },
+    "/test/testMultipart": {
+      "post": {
+        "summary": "测试 multipart 表单参数编码",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "测试"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "example": ""
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "测试",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939959-run"
+      }
+    },
+    "/api/rag/document/upload": {
+      "post": {
+        "summary": "上传 DOCX 索引（纯文本，不做 OCR）",
+        "deprecated": false,
+        "description": "上传 .docx 文件，解析正文 + 表格，切片向量化后写入 ES。",
+        "operationId": "uploadDocument",
+        "tags": [
+          "RAG 文档上传"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "DOCX 文件",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 200,
+                  "msg": "上传成功",
+                  "data": {
+                    "docId": "doc_20260613_001",
+                    "chunkCount": 8,
+                    "fileName": "example.docx"
+                  }
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "RAG 文档上传",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-473111071-run"
+      }
+    },
+    "/api/rag/document/upload/mixed": {
+      "post": {
+        "summary": "上传含图片 DOCX（自动 OCR）",
+        "deprecated": false,
+        "description": "解析 DOCX 时，对内嵌图片执行 Tess4j OCR 提取文字，与正文合并后入库。",
+        "operationId": "uploadMixedDocument",
+        "tags": [
+          "RAG 文档上传"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "含图片的 DOCX 文件",
+                    "example": ""
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 200,
+                  "msg": "上传成功",
+                  "data": {
+                    "docId": "doc_20260613_002",
+                    "chunkCount": 12,
+                    "imageCount": 3,
+                    "ocrTextLength": 245
+                  }
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "RAG 文档上传",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-473111072-run"
+      }
+    },
+    "/api/rag/document/parse": {
+      "post": {
+        "summary": "仅解析（不入库，调试用）",
+        "deprecated": false,
+        "description": "返回解析后的原始文本/表格/OCR 文本，不写 ES 不写 MySQL。",
+        "operationId": "parseDocument",
+        "tags": [
+          "RAG 文档上传"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "DOCX 文件",
+                    "example": ""
+                  },
+                  "withOcr": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "是否对图片做 OCR",
+                    "example": "false"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": {
+                    "content": "解析后的全文...",
+                    "source": "docx",
+                    "type": "mixed",
+                    "metadata": {
+                      "filePath": "/tmp/upload_xxx.docx"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "RAG 文档上传",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-473111073-run"
+      }
+    },
+    "/api/rag/document/status/{docId}": {
+      "get": {
+        "summary": "查询上传任务状态",
+        "deprecated": false,
+        "description": "",
+        "operationId": "getDocumentStatus",
+        "tags": [
+          "RAG 文档上传"
+        ],
+        "parameters": [
+          {
+            "name": "docId",
+            "in": "path",
+            "description": "上传时返回的 docId",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 200,
+                  "msg": "success",
+                  "data": {
+                    "docId": "doc_20260613_001",
+                    "fileName": "example.docx",
+                    "status": "INDEXED",
+                    "chunkCount": 8,
+                    "createTime": "2026-06-13 12:00:00"
+                  }
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          },
+          "404": {
+            "description": "docId 不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                },
+                "example": {
+                  "code": 404,
+                  "msg": "文档不存在",
+                  "data": null
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 1
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "RAG 文档上传",
+        "x-apifox-status": "released",
+        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-473111074-run"
+      }
+    }
+  },
+  "webhooks": {},
+  "components": {
+    "schemas": {
+      "ResultVO": {
+        "type": "object",
+        "description": "统一响应包装",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码：200 成功，其他失败",
+            "examples": [
+              200
+            ]
+          },
+          "msg": {
+            "type": "string",
+            "description": "提示信息",
+            "examples": [
+              "success"
+            ]
+          },
+          "data": {
+            "description": "业务数据，结构按具体接口而定",
+            "type": "null"
+          }
+        },
+        "x-apifox-orders": [
+          "code",
+          "msg",
+          "data"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "GetListRequest": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "examples": [
+              1
+            ]
+          },
+          "pageSize": {
+            "type": "integer",
+            "examples": [
+              10
+            ]
+          },
+          "typeId": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "分类ID（可选）"
+          },
+          "modalType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "模态类型（可选）"
+          },
+          "keyword": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "关键词搜索（可选）"
+          }
+        },
+        "x-apifox-orders": [
+          "pageNum",
+          "pageSize",
+          "typeId",
+          "modalType",
+          "keyword"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "RagSearchRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "检索查询语句",
+            "examples": [
+              "北约军演"
+            ]
+          },
+          "topK": {
+            "type": "integer",
+            "description": "返回前 K 条结果",
+            "default": 10,
+            "examples": [
+              10
+            ]
+          },
+          "hybrid": {
+            "type": "boolean",
+            "description": "是否混合检索（BM25+向量 RRF）。false 仅向量。",
+            "default": true,
+            "examples": [
+              true
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "query",
+          "topK",
+          "hybrid"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "AddCategoryRequest": {
+        "type": "object",
+        "required": [
+          "categoryName",
+          "parentCategoryName"
+        ],
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "description": "二级分类名称"
+          },
+          "parentCategoryName": {
+            "type": "string",
+            "description": "一级分类名称"
+          }
+        },
+        "x-apifox-orders": [
+          "categoryName",
+          "parentCategoryName"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "RagIndexTriggerRequest": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "description": "起始日期 yyyy-MM-dd（不传则默认全量）",
+            "examples": [
+              "2026-06-01"
+            ]
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "description": "结束日期 yyyy-MM-dd",
+            "examples": [
+              "2026-06-13"
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "startDate",
+          "endDate"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "FusionCreateRequest": {
+        "type": "object",
+        "required": [
+          "reports"
+        ],
+        "properties": {
+          "reports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "extractionResult": {
+                  "type": "object",
+                  "x-apifox-orders": [],
+                  "properties": {},
+                  "x-apifox-ignore-properties": []
+                }
+              },
+              "x-apifox-orders": [
+                "id",
+                "title",
+                "content",
+                "extractionResult"
+              ],
+              "x-apifox-ignore-properties": []
+            }
+          },
+          "fusionType": {
+            "type": "string",
+            "examples": [
+              "standard"
+            ]
+          },
+          "customTitle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "reports",
+          "fusionType",
+          "customTitle"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "FusionDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "timelineJson": {
+            "type": "string"
+          },
+          "entitiesJson": {
+            "type": "string"
+          },
+          "labelsJson": {
+            "type": "string"
+          },
+          "sourceIds": {
+            "type": "string"
+          },
+          "modelUsed": {
+            "type": "string"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "x-apifox-orders": [
+          "id",
+          "title",
+          "summary",
+          "content",
+          "timelineJson",
+          "entitiesJson",
+          "labelsJson",
+          "sourceIds",
+          "modelUsed",
+          "createTime"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "TriggerAnalysisRequest": {
+        "type": "object",
+        "required": [
+          "startDate",
+          "endDate"
+        ],
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "examples": [
+              "2026-06-01"
+            ]
+          },
+          "endDate": {
+            "type": "string",
+            "examples": [
+              "2026-06-12"
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "startDate",
+          "endDate"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "EventAnalysisQueryRequest": {
+        "type": "object",
+        "required": [
+          "startDate",
+          "endDate"
+        ],
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "examples": [
+              "2026-06-01"
+            ]
+          },
+          "endDate": {
+            "type": "string",
+            "examples": [
+              "2026-06-12"
+            ]
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "examples": [
+              [
+                "美国",
+                "俄罗斯",
+                "乌克兰"
+              ]
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "startDate",
+          "endDate",
+          "keywords"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "AddFieldRequest": {
+        "type": "object",
+        "required": [
+          "tableName",
+          "fieldName",
+          "dataType"
+        ],
+        "properties": {
+          "tableName": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          },
+          "dataType": {
+            "type": "string",
+            "examples": [
+              "VARCHAR(255)"
+            ]
+          },
+          "comment": {
+            "type": "string"
+          },
+          "defaultValue": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": [
+          "tableName",
+          "fieldName",
+          "dataType",
+          "comment",
+          "defaultValue",
+          "nullable"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "ModifyFieldRequest": {
+        "type": "object",
+        "required": [
+          "tableName",
+          "fieldName",
+          "dataType"
+        ],
+        "properties": {
+          "tableName": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          },
+          "dataType": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "defaultValue": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": [
+          "tableName",
+          "fieldName",
+          "dataType",
+          "comment",
+          "defaultValue",
+          "nullable"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "DeleteFieldRequest": {
+        "type": "object",
+        "required": [
+          "tableName",
+          "fieldName"
+        ],
+        "properties": {
+          "tableName": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": [
+          "tableName",
+          "fieldName"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "CategoryCreateRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": [
+          "name",
+          "parentId",
+          "description"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "CategoryUpdateRequest": {
+        "type": "object",
+        "required": [
+          "categoryId"
+        ],
+        "properties": {
+          "categoryId": {
+            "type": "integer"
+          },
+          "newName": {
+            "type": "string"
+          },
+          "newDescription": {
+            "type": "string"
+          }
+        },
+        "x-apifox-orders": [
+          "categoryId",
+          "newName",
+          "newDescription"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "CategoryMoveRequest": {
+        "type": "object",
+        "required": [
+          "categoryId"
+        ],
+        "properties": {
+          "categoryId": {
+            "type": "integer"
+          },
+          "newParentId": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "categoryId",
+          "newParentId"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      }
+    },
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081",
+      "description": "本地开发环境"
+    },
+    {
+      "url": "http://localhost:9202",
+      "description": "Docker 部署环境"
+    }
+  ],
+  "security": []
+}

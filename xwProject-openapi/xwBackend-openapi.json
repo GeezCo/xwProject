@@ -1,0 +1,1971 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "献微系统 - 后端 API (xwBackend)",
+    "description": "献微系统后端接口文档。包含 9 个模块：\n- 报文管理 (UygurController)\n- 分类管理 (CategoryController)\n- 属性抽取 (ExtractionController)\n- 报文融合 (FusionController)\n- 每日要情/事件分析 (EventAnalysisController)\n- RAG 语义检索 (RagController)\n- 数据统计看板 (DashboardController)\n- 数据库管理 (DatabaseController)\n- 测试/调试 (TestController)\n\n基于 Spring Boot 2.7.18，全部 Controller 基于源码静态导出，未经运行验证。\n",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081",
+      "description": "本地开发环境"
+    },
+    {
+      "url": "http://localhost:9202",
+      "description": "Docker 部署环境"
+    }
+  ],
+  "tags": [
+    {
+      "name": "报文管理",
+      "description": "UygurController - 报文列表/详情/导入/分类CRUD"
+    },
+    {
+      "name": "分类管理",
+      "description": "CategoryController - 树形分类管理"
+    },
+    {
+      "name": "属性抽取",
+      "description": "ExtractionController - LLM 事件抽取（单条 + 批量）"
+    },
+    {
+      "name": "报文融合",
+      "description": "FusionController - 多报文融合报告"
+    },
+    {
+      "name": "每日要情",
+      "description": "EventAnalysisController - 事件分析定时任务"
+    },
+    {
+      "name": "RAG检索",
+      "description": "RagController - 语义检索索引"
+    },
+    {
+      "name": "数据看板",
+      "description": "DashboardController - 核心指标统计"
+    },
+    {
+      "name": "数据库管理",
+      "description": "DatabaseController - 表结构动态修改"
+    },
+    {
+      "name": "测试",
+      "description": "TestController - 编码调试"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ResultVO": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "操作成功"
+          },
+          "data": {
+            "description": "业务数据，类型依接口而定"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ]
+      },
+      "GetListRequest": {
+        "type": "object",
+        "properties": {
+          "pageNum": {
+            "type": "integer",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "example": 10
+          },
+          "typeId": {
+            "type": "integer",
+            "nullable": true,
+            "description": "分类ID（可选）"
+          },
+          "modalType": {
+            "type": "string",
+            "nullable": true,
+            "description": "模态类型（可选）"
+          },
+          "keyword": {
+            "type": "string",
+            "nullable": true,
+            "description": "关键词搜索（可选）"
+          }
+        }
+      },
+      "AddCategoryRequest": {
+        "type": "object",
+        "required": [
+          "categoryName",
+          "parentCategoryName"
+        ],
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "description": "二级分类名称"
+          },
+          "parentCategoryName": {
+            "type": "string",
+            "description": "一级分类名称"
+          }
+        }
+      },
+      "FusionCreateRequest": {
+        "type": "object",
+        "required": [
+          "reports"
+        ],
+        "properties": {
+          "reports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "extractionResult": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "fusionType": {
+            "type": "string",
+            "example": "standard"
+          },
+          "customTitle": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FusionDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "timelineJson": {
+            "type": "string"
+          },
+          "entitiesJson": {
+            "type": "string"
+          },
+          "labelsJson": {
+            "type": "string"
+          },
+          "sourceIds": {
+            "type": "string"
+          },
+          "modelUsed": {
+            "type": "string"
+          },
+          "createTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TriggerAnalysisRequest": {
+        "type": "object",
+        "required": [
+          "startDate",
+          "endDate"
+        ],
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "example": "2026-06-01"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "2026-06-12"
+          }
+        }
+      },
+      "EventAnalysisQueryRequest": {
+        "type": "object",
+        "required": [
+          "startDate",
+          "endDate"
+        ],
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "example": "2026-06-01"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "2026-06-12"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "美国",
+              "俄罗斯",
+              "乌克兰"
+            ]
+          }
+        }
+      },
+      "RagIndexTriggerRequest": {
+        "type": "object",
+        "required": [
+          "startDate",
+          "endDate"
+        ],
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "example": "2026-06-01"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "2026-06-12"
+          }
+        }
+      },
+      "RagSearchRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "example": "北约军事演习"
+          },
+          "topK": {
+            "type": "integer",
+            "example": 10
+          },
+          "hybrid": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "AddFieldRequest": {
+        "type": "object",
+        "required": [
+          "tableName",
+          "fieldName",
+          "dataType"
+        ],
+        "properties": {
+          "tableName": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          },
+          "dataType": {
+            "type": "string",
+            "example": "VARCHAR(255)"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "defaultValue": {
+            "type": "string"
+          },
+          "nullable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ModifyFieldRequest": {
+        "type": "object",
+        "required": [
+          "tableName",
+          "fieldName",
+          "dataType"
+        ],
+        "properties": {
+          "tableName": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          },
+          "dataType": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "defaultValue": {
+            "type": "string"
+          },
+          "nullable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DeleteFieldRequest": {
+        "type": "object",
+        "required": [
+          "tableName",
+          "fieldName"
+        ],
+        "properties": {
+          "tableName": {
+            "type": "string"
+          },
+          "fieldName": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoryCreateRequest": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "integer",
+            "nullable": true
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoryUpdateRequest": {
+        "type": "object",
+        "required": [
+          "categoryId"
+        ],
+        "properties": {
+          "categoryId": {
+            "type": "integer"
+          },
+          "newName": {
+            "type": "string"
+          },
+          "newDescription": {
+            "type": "string"
+          }
+        }
+      },
+      "CategoryMoveRequest": {
+        "type": "object",
+        "required": [
+          "categoryId"
+        ],
+        "properties": {
+          "categoryId": {
+            "type": "integer"
+          },
+          "newParentId": {
+            "type": "integer",
+            "nullable": true
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/uygur/config": {
+      "get": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "获取系统配置（MinIO地址等）",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/savetext": {
+      "get": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "批量导入文本数据（旧版，无响应体）",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/uygur/category": {
+      "get": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "获取文本分类列表",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "新增分类（通用版本，支持一级和二级）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "typeName": {
+                    "type": "string"
+                  },
+                  "parentId": {
+                    "type": "integer",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/detail/{sid}": {
+      "get": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "获取单个报文详情",
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/getTextList": {
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "分页查询文本列表",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetListRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/resetExtracted": {
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "重置所有报文的抽取状态为未抽取",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/addCategory": {
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "新增二级分类",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddCategoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/category/{categoryId}": {
+      "put": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "修改分类名称",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "newTypeName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "删除分类",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/category/{categoryId}/withTexts": {
+      "delete": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "删除分类及其下所有报文",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/category/batchDelete": {
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "批量删除分类",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/importFromJsonl": {
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "从JSONL文件批量导入报文（按 sendUnitName 自动分类）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "defaultCategoryId": {
+                    "type": "integer",
+                    "default": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/importFromJsonlWithImages": {
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "从JSONL文件导入报文（含图片）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file",
+                  "parentCategoryName",
+                  "categoryName"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "parentCategoryName": {
+                    "type": "string"
+                  },
+                  "categoryName": {
+                    "type": "string"
+                  },
+                  "images": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/text/{sid}": {
+      "delete": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "删除报文",
+        "parameters": [
+          {
+            "name": "sid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/text/batchDelete": {
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "批量删除报文",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int64"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/uygur/text/updateByOldType": {
+      "post": {
+        "tags": [
+          "报文管理"
+        ],
+        "summary": "按旧分类ID批量更新报文分类",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "oldTypeId": {
+                    "type": "integer"
+                  },
+                  "newTypeId": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/category/tree": {
+      "get": {
+        "tags": [
+          "分类管理"
+        ],
+        "summary": "获取完整分类树",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/category/leafs": {
+      "get": {
+        "tags": [
+          "分类管理"
+        ],
+        "summary": "获取所有叶子节点",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/category/create": {
+      "post": {
+        "tags": [
+          "分类管理"
+        ],
+        "summary": "新增分类节点",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/category/update": {
+      "put": {
+        "tags": [
+          "分类管理"
+        ],
+        "summary": "更新分类节点（重命名、修改描述）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/category/move": {
+      "post": {
+        "tags": [
+          "分类管理"
+        ],
+        "summary": "移动分类节点",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryMoveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/category/delete/{categoryId}": {
+      "delete": {
+        "tags": [
+          "分类管理"
+        ],
+        "summary": "删除分类节点（级联删除子节点）",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/category/detail/{categoryId}": {
+      "get": {
+        "tags": [
+          "分类管理"
+        ],
+        "summary": "获取分类节点详情",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/extraction/extract": {
+      "post": {
+        "tags": [
+          "属性抽取"
+        ],
+        "summary": "执行属性抽取（单条）",
+        "parameters": [
+          {
+            "name": "originTextId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "force",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/extraction/result/{originTextId}": {
+      "get": {
+        "tags": [
+          "属性抽取"
+        ],
+        "summary": "查询抽取结果",
+        "parameters": [
+          {
+            "name": "originTextId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/extraction/batch/start": {
+      "post": {
+        "tags": [
+          "属性抽取"
+        ],
+        "summary": "启动批量抽取任务",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2026-06-01"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2026-06-12"
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "unextracted",
+                "all"
+              ],
+              "default": "unextracted"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/extraction/batch/progress/{taskId}": {
+      "get": {
+        "tags": [
+          "属性抽取"
+        ],
+        "summary": "查询批量抽取任务进度",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/extraction/batch/stop/{taskId}": {
+      "post": {
+        "tags": [
+          "属性抽取"
+        ],
+        "summary": "停止批量抽取任务",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fusion/create": {
+      "post": {
+        "tags": [
+          "报文融合"
+        ],
+        "summary": "创建融合报告（调用LLM）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FusionCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fusion/save": {
+      "post": {
+        "tags": [
+          "报文融合"
+        ],
+        "summary": "保存融合报告到数据库",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FusionDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fusion/list": {
+      "get": {
+        "tags": [
+          "报文融合"
+        ],
+        "summary": "查询融合报告列表",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fusion/detail/{id}": {
+      "get": {
+        "tags": [
+          "报文融合"
+        ],
+        "summary": "查询融合报告详情",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fusion/export/pdf/{id}": {
+      "get": {
+        "tags": [
+          "报文融合"
+        ],
+        "summary": "导出融合报告为PDF（开发中）",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fusion/export/word/{id}": {
+      "get": {
+        "tags": [
+          "报文融合"
+        ],
+        "summary": "导出融合报告为Word（开发中）",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/fusion/searchByTarget": {
+      "post": {
+        "tags": [
+          "报文融合"
+        ],
+        "summary": "根据目标名称搜索相关报文",
+        "parameters": [
+          {
+            "name": "targetName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "第七舰队"
+            }
+          },
+          {
+            "name": "maxReports",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/eventAnalysis/trigger": {
+      "post": {
+        "tags": [
+          "每日要情"
+        ],
+        "summary": "手动触发分析任务（异步）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TriggerAnalysisRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/eventAnalysis/query": {
+      "post": {
+        "tags": [
+          "每日要情"
+        ],
+        "summary": "查询事件（按关键词筛选）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventAnalysisQueryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/eventAnalysis/status": {
+      "get": {
+        "tags": [
+          "每日要情"
+        ],
+        "summary": "查询分析任务状态",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "2026-06-12"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rag/index/status": {
+      "get": {
+        "tags": [
+          "RAG检索"
+        ],
+        "summary": "查询索引状态",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rag/index/trigger": {
+      "post": {
+        "tags": [
+          "RAG检索"
+        ],
+        "summary": "手动触发索引",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RagIndexTriggerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rag/search": {
+      "post": {
+        "tags": [
+          "RAG检索"
+        ],
+        "summary": "语义检索",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RagSearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rag/index/log": {
+      "get": {
+        "tags": [
+          "RAG检索"
+        ],
+        "summary": "查询索引日志",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/overview": {
+      "get": {
+        "tags": [
+          "数据看板"
+        ],
+        "summary": "获取核心指标概览",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/categoryDistribution": {
+      "get": {
+        "tags": [
+          "数据看板"
+        ],
+        "summary": "获取分类分布统计",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/modalDistribution": {
+      "get": {
+        "tags": [
+          "数据看板"
+        ],
+        "summary": "获取模态类型分布统计",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/dashboard/recentFusions": {
+      "get": {
+        "tags": [
+          "数据看板"
+        ],
+        "summary": "获取最近融合报告列表",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/database/table/structure": {
+      "get": {
+        "tags": [
+          "数据库管理"
+        ],
+        "summary": "获取表结构",
+        "parameters": [
+          {
+            "name": "tableName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/database/field/add": {
+      "post": {
+        "tags": [
+          "数据库管理"
+        ],
+        "summary": "新增字段",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddFieldRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/database/field/modify": {
+      "post": {
+        "tags": [
+          "数据库管理"
+        ],
+        "summary": "修改字段",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModifyFieldRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/database/field/delete": {
+      "post": {
+        "tags": [
+          "数据库管理"
+        ],
+        "summary": "删除字段",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteFieldRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test/queryCategory": {
+      "get": {
+        "tags": [
+          "测试"
+        ],
+        "summary": "查询分类（编码调试）",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/test/testMultipart": {
+      "post": {
+        "tags": [
+          "测试"
+        ],
+        "summary": "测试 multipart 表单参数编码",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

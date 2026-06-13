@@ -1,1 +1,0 @@
-{"code":1,"data":[{"id":1,"typeName":"根分类","parentId":null,"children":[{"id":2,"typeName":"未分类","parentId":1,"children":null},{"id":13,"typeName":"验证节点","parentId":1,"children":null},{"id":14,"typeName":"VerifyNode","parentId":1,"children":null},{"id":15,"typeName":"中文测试节点B","parentId":1,"children":null}]}],"msg":"success","flag":"true"}

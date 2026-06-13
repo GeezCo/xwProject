@@ -1,0 +1,111 @@
+spring:
+  application:
+    name: uygur-project
+  datasource:
+    url: jdbc:mysql://localhost:${MYSQL_PORT:9204}/uygur_project?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_ROOT_PASSWORD:jixianyuan1314}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: ${BACKEND_PORT:9202}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    root: info
+    com.qy.dch: info
+  file:
+    name: logs/application.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+mybatis:
+  type-aliases-package: com.qy.dch.dto
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+filePath: /tmp/all_text_time.json
+
+algorithm:
+  service:
+    url: http://localhost:${ALGORITHM_PORT:9203}
+
+minio:
+  endpoint: http://${SERVER_IP:36.141.21.176}:${MINIO_API_PORT:9205}
+  access-key: ${MINIO_ROOT_USER:xianwei-admin}
+  secret-key: ${MINIO_ROOT_PASSWORD:xianwei2024}
+  bucket: xianwei-images
+
+# RAG 知识库配置（离线生产环境）
+rag:
+  elasticsearch:
+    host: ${ES_HOST:localhost}
+    port: ${ES_PORT:9207}
+    username:
+    password:
+    index-name: xianwei_docs
+  embedding:
+    base-url: ${EMBEDDING_BASE_URL:http://localhost:9208}
+    model: bge-large-zh-v1.5
+    dimension: 1024
+    batch-size: 32
+    retry-count: 3
+    retry-delay-ms: 5000
+    timeout-seconds: 60
+  chunk:
+    short-threshold: 128
+    medium-threshold: 512
+    medium-size: 256
+    long-size: 512
+    overlap: 64
+  indexing:
+    max-duration-minutes: 30
+    es-batch-size: 100
+  search:
+    bm25-weight: 0.3
+    vector-weight: 0.7
+    rrf-k: 60
+    default-top-k: 10
+  ocr:
+    enabled: false
+    thread-pool-size: 4
+    tesseract:
+      datapath: /usr/share/tesseract-ocr/4.00/tessdata
+      language: chi_sim+eng
+      page-seg-mode: 1
+      ocr-engine-mode: 1
+    image:
+      enable-ocr: false
+      max-size-mb: 10
+  parser:
+    max-file-size-mb: 50
+    temp-dir: /tmp/xianwei-uploads
+    strict-docx-only: true
