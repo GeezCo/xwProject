@@ -1,0 +1,14 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# macOS
+.DS_Store
+
+# 日志
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
