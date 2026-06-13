@@ -43,6 +43,18 @@ public class RagServiceImpl implements RagService {
     @Autowired
     private RagProperties ragProperties;
 
+    @Autowired
+    private com.qy.dch.rag.parser.DocxParserService docxParserService;
+
+    @Autowired
+    private com.qy.dch.rag.parser.DocxMixedParserService docxMixedParserService;
+
+    @Autowired
+    private com.qy.dch.mapper.RagDocumentMapper ragDocumentMapper;
+
+    @Autowired
+    private com.qy.dch.rag.config.DocumentParserProperties parserProperties;
+
     private final AtomicBoolean indexingRunning = new AtomicBoolean(false);
 
     @Override
@@ -215,5 +227,123 @@ public class RagServiceImpl implements RagService {
             log.error("每日 RAG 索引任务失败", e);
         }
         log.info("========== 每日 RAG 索引任务结束 ==========");
+    }
+
+    @Override
+    public com.qy.dch.common.ResultVO uploadAndIndex(
+            org.springframework.web.multipart.MultipartFile file, boolean withOcr) {
+        long startTime = System.currentTimeMillis();
+
+        if (file == null || file.isEmpty()) {
+            return com.qy.dch.common.ResultVO.error("文件为空");
+        }
+        String filename = file.getOriginalFilename();
+        if (filename == null || !filename.toLowerCase().endsWith(".docx")) {
+            return com.qy.dch.common.ResultVO.error("仅支持 DOCX 格式文件");
+        }
+        long maxBytes = parserProperties.getMaxFileSizeMb() * 1024L * 1024L;
+        if (file.getSize() > maxBytes) {
+            return com.qy.dch.common.ResultVO.error(
+                "文件超过 " + parserProperties.getMaxFileSizeMb() + "MB 限制");
+        }
+
+        java.io.File tempFile;
+        try {
+            tempFile = java.io.File.createTempFile("upload_", ".docx");
+            file.transferTo(tempFile);
+        } catch (java.io.IOException e) {
+            log.error("保存临时文件失败", e);
+            return com.qy.dch.common.ResultVO.error("保存临时文件失败: " + e.getMessage());
+        }
+
+        com.qy.dch.rag.model.RagDocument doc = new com.qy.dch.rag.model.RagDocument();
+        String docId = "upload_" + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+        doc.setDocId(docId);
+        doc.setFilename(filename);
+        doc.setFileSize(file.getSize());
+        doc.setStatus("pending");
+        doc.setUploadTime(new java.util.Date());
+        ragDocumentMapper.insert(doc);
+
+        try {
+            com.qy.dch.rag.model.ParsedDocument parsed = withOcr
+                    ? docxMixedParserService.parseMixedDocx(tempFile.getAbsolutePath())
+                    : docxParserService.parseSimpleDocx(tempFile.getAbsolutePath());
+
+            java.util.Map<String, Object> metadata = new java.util.HashMap<>();
+            metadata.put("title", filename);
+            metadata.put("source", "upload");
+            metadata.put("docId", docId);
+
+            java.util.List<com.qy.dch.rag.model.DocumentChunk> chunks =
+                    chunkService.chunkDocument(docId, parsed.getContent(), metadata);
+
+            java.util.List<String> texts = new java.util.ArrayList<>();
+            for (com.qy.dch.rag.model.DocumentChunk c : chunks) texts.add(c.getContent());
+            java.util.List<float[]> vectors = embeddingService.embedBatch(texts);
+            if (vectors == null || vectors.size() != chunks.size()) {
+                throw new IllegalStateException("向量化结果数量与切片不匹配");
+            }
+            for (int i = 0; i < chunks.size(); i++) {
+                chunks.get(i).setEmbedding(vectors.get(i));
+            }
+
+            esVectorStore.ensureIndex();
+            esVectorStore.bulkIndex(chunks);
+
+            ragDocumentMapper.updateStatus(docId, "indexed", chunks.size(), null);
+
+            java.util.Map<String, Object> data = new java.util.HashMap<>();
+            data.put("docId", docId);
+            data.put("chunkCount", chunks.size());
+            data.put("elapsedMs", System.currentTimeMillis() - startTime);
+            return com.qy.dch.common.ResultVO.success(data);
+
+        } catch (Exception e) {
+            log.error("文档上传索引失败: docId={}", docId, e);
+            ragDocumentMapper.updateStatus(docId, "failed", null, e.getMessage());
+            return com.qy.dch.common.ResultVO.error("索引失败: " + e.getMessage());
+        } finally {
+            if (!tempFile.delete()) {
+                log.warn("临时文件删除失败: {}", tempFile.getAbsolutePath());
+            }
+        }
+    }
+
+    @Override
+    public com.qy.dch.common.ResultVO parseOnly(
+            org.springframework.web.multipart.MultipartFile file, boolean withOcr) {
+        if (file == null || file.isEmpty()) {
+            return com.qy.dch.common.ResultVO.error("文件为空");
+        }
+        java.io.File tempFile;
+        try {
+            tempFile = java.io.File.createTempFile("parse_", ".docx");
+            file.transferTo(tempFile);
+        } catch (java.io.IOException e) {
+            return com.qy.dch.common.ResultVO.error("保存临时文件失败: " + e.getMessage());
+        }
+        try {
+            com.qy.dch.rag.model.ParsedDocument parsed = withOcr
+                    ? docxMixedParserService.parseMixedDocx(tempFile.getAbsolutePath())
+                    : docxParserService.parseSimpleDocx(tempFile.getAbsolutePath());
+            java.util.Map<String, Object> data = new java.util.HashMap<>();
+            data.put("content", parsed.getContent());
+            data.put("metadata", parsed.getMetadata());
+            return com.qy.dch.common.ResultVO.success(data);
+        } catch (Exception e) {
+            return com.qy.dch.common.ResultVO.error("解析失败: " + e.getMessage());
+        } finally {
+            tempFile.delete();
+        }
+    }
+
+    @Override
+    public com.qy.dch.common.ResultVO getDocumentStatus(String docId) {
+        com.qy.dch.rag.model.RagDocument doc = ragDocumentMapper.selectByDocId(docId);
+        if (doc == null) {
+            return com.qy.dch.common.ResultVO.error("docId 不存在: " + docId);
+        }
+        return com.qy.dch.common.ResultVO.success(doc);
     }
 }
