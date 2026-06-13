@@ -247,12 +247,17 @@ public class RagServiceImpl implements RagService {
                 "文件超过 " + parserProperties.getMaxFileSizeMb() + "MB 限制");
         }
 
-        java.io.File tempFile;
+        java.io.File tempFile = null;
         try {
             tempFile = java.io.File.createTempFile("upload_", ".docx");
             file.transferTo(tempFile);
         } catch (java.io.IOException e) {
             log.error("保存临时文件失败", e);
+            if (tempFile != null && tempFile.exists()) {
+                if (!tempFile.delete()) {
+                    log.warn("临时文件清理失败: {}", tempFile.getAbsolutePath());
+                }
+            }
             return com.qy.dch.common.ResultVO.error("保存临时文件失败: " + e.getMessage());
         }
 
@@ -316,11 +321,17 @@ public class RagServiceImpl implements RagService {
         if (file == null || file.isEmpty()) {
             return com.qy.dch.common.ResultVO.error("文件为空");
         }
-        java.io.File tempFile;
+        java.io.File tempFile = null;
         try {
             tempFile = java.io.File.createTempFile("parse_", ".docx");
             file.transferTo(tempFile);
         } catch (java.io.IOException e) {
+            log.error("保存临时文件失败", e);
+            if (tempFile != null && tempFile.exists()) {
+                if (!tempFile.delete()) {
+                    log.warn("临时文件清理失败: {}", tempFile.getAbsolutePath());
+                }
+            }
             return com.qy.dch.common.ResultVO.error("保存临时文件失败: " + e.getMessage());
         }
         try {
