@@ -36,11 +36,6 @@ config.local.json
 node_modules/
 前端/qyportrait/node_modules/
 
-# 独立子仓库（各自从内网 git 远程拉取，父仓库只做 GitHub 备份壳）
-xwBackend/
-xwFrontend/
-algorithm/
-
 # 子仓库本地备份目录
 xwFrontend.local_backup_*/
 algorithm.local_backup_*/
