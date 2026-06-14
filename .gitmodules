@@ -1,0 +1,12 @@
+[submodule "xwSystem/xwBackend"]
+	path = xwSystem/xwBackend
+	url = git@github.com:GeezCo/xianwei_server.git
+	branch = wqZhang
+[submodule "xwSystem/xwFrontend"]
+	path = xwSystem/xwFrontend
+	url = git@github.com:GeezCo/xianwei_web.git
+	branch = wqZhang
+[submodule "xwSystem/algorithm"]
+	path = xwSystem/algorithm
+	url = git@github.com:GeezCo/xianwei_algo.git
+	branch = wqZhang
