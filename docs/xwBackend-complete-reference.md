@@ -870,6 +870,7 @@ ResultMap `FusionResultMap → FusionDTO`：`id→fusionId, title, summary, time
 | POST | `/fusion` | body `List<String> targetNames` |
 | GET | `/fusion/list` | — |
 | GET | `/fusion/detail` | `?targetName=` |
+| GET | `/fusion/export` | `?targetName=&format=docx|pdf` → 文件流（Content-Disposition: attachment，RFC 5987 UTF-8 中文文件名） |
 
 **别名管理**
 | Verb | Path | Params |
@@ -1497,6 +1498,18 @@ GET /api/target/fusion/detail?targetName=哈尔科夫弹药库
 - `basicInfo.sources` 由 `TargetAnalysisMapper.selectByFilter(null, targetName)` 已 JOIN `origin_text` 直接拿 `sendUnitName`。
 - `fusionResult` 取 `target_fusion` 中**最新一条**包含该名字的记录，命中条件用 `LIKE CONCAT('%', "<targetName>", '%')`，前后带引号防止子串误中（needle = `"\"" + targetName + "\""`）。
 - 该名字无任何分析记录时返回 `null`；有分析无融合时三个字段返回空字符串。
+
+#### 17.2.7 导出功能（A1 PDF + A2 Word）
+
+融合弹窗中提供 Word 与 PDF 两种导出格式：
+
+- 端点：`GET /api/target/fusion/export?targetName=<目标>&format=docx|pdf`
+- Word：Apache POI 5.2.5 生成真实 `.docx`（OOXML，可用 Office/WPS 打开）
+- PDF：iText 5.5.13.3 + Noto Sans SC 字体（`src/main/resources/fonts/NotoSansSC-Regular.ttf`），支持中文 + 图片嵌入
+- 图片来自 MinIO，下载失败时降级为 `[图片：<URL>]` 文本占位（RestTemplate 2s 连接 / 5s 读超时）
+- 文件名：`<目标名>_融合报告.docx` / `.pdf`，HTTP 头使用 RFC 5987 `filename*=UTF-8''` 编码确保中文不乱码
+- 服务实现：`DocumentExportServiceImpl`，字体通过 `PdfFontProvider` Bean 在启动期 `@PostConstruct` 一次性加载
+- 前端入口：`05-3-target-fusion.html` "融合生成目标报"弹窗底部 "导出 Word" / "导出 PDF" 按钮，多目标场景通过隐藏 iframe 串行触发下载
 
 ### 17.3 数据量与异步策略
 
