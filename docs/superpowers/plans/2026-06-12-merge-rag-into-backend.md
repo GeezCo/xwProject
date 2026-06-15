@@ -10,6 +10,11 @@
 
 **Spec:** `docs/superpowers/specs/2026-06-12-merge-rag-into-backend-design.md`
 
+**Status:** ✅ 计划已确认，等待实施
+
+**Created:** 2026-06-12  
+**Confirmed:** 2026-06-14
+
 ---
 
 ## File Structure

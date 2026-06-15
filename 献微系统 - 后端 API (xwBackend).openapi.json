@@ -41,10 +41,16 @@
     },
     {
       "name": "RAG 检索"
+    },
+    {
+      "name": "目录树"
+    },
+    {
+      "name": "目标管理"
     }
   ],
   "paths": {
-    "/uygur/config": {
+    "/api/uygur/config": {
       "get": {
         "summary": "获取系统配置（MinIO地址等）",
         "deprecated": false,
@@ -73,7 +79,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939907-run"
       }
     },
-    "/uygur/savetext": {
+    "/api/uygur/savetext": {
       "get": {
         "summary": "批量导入文本数据（旧版，无响应体）",
         "deprecated": false,
@@ -95,7 +101,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939908-run"
       }
     },
-    "/uygur/category": {
+    "/api/uygur/category": {
       "get": {
         "summary": "获取文本分类列表",
         "deprecated": false,
@@ -177,7 +183,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939910-run"
       }
     },
-    "/uygur/detail/{sid}": {
+    "/api/uygur/detail/{sid}": {
       "get": {
         "summary": "获取单个报文详情",
         "deprecated": false,
@@ -218,7 +224,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939911-run"
       }
     },
-    "/uygur/getTextList": {
+    "/api/uygur/getTextList": {
       "post": {
         "summary": "分页查询文本列表",
         "deprecated": false,
@@ -257,7 +263,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939912-run"
       }
     },
-    "/uygur/resetExtracted": {
+    "/api/uygur/resetExtracted": {
       "post": {
         "summary": "重置所有报文的抽取状态为未抽取",
         "deprecated": false,
@@ -286,7 +292,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939913-run"
       }
     },
-    "/uygur/addCategory": {
+    "/api/uygur/addCategory": {
       "post": {
         "summary": "新增二级分类",
         "deprecated": false,
@@ -325,7 +331,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939914-run"
       }
     },
-    "/uygur/category/{categoryId}": {
+    "/api/uygur/category/{categoryId}": {
       "put": {
         "summary": "修改分类名称",
         "deprecated": false,
@@ -422,7 +428,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939916-run"
       }
     },
-    "/uygur/category/{categoryId}/withTexts": {
+    "/api/uygur/category/{categoryId}/withTexts": {
       "delete": {
         "summary": "删除分类及其下所有报文",
         "deprecated": false,
@@ -462,7 +468,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939917-run"
       }
     },
-    "/uygur/category/batchDelete": {
+    "/api/uygur/category/batchDelete": {
       "post": {
         "summary": "批量删除分类",
         "deprecated": false,
@@ -504,7 +510,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939918-run"
       }
     },
-    "/uygur/importFromJsonl": {
+    "/api/uygur/importFromJsonl": {
       "post": {
         "summary": "从JSONL文件批量导入报文（按 sendUnitName 自动分类）",
         "deprecated": false,
@@ -558,7 +564,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939919-run"
       }
     },
-    "/uygur/importFromJsonlWithImages": {
+    "/api/uygur/importFromJsonlWithImages": {
       "post": {
         "summary": "从JSONL文件导入报文（含图片）",
         "deprecated": false,
@@ -625,7 +631,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939920-run"
       }
     },
-    "/uygur/text/{sid}": {
+    "/api/uygur/text/{sid}": {
       "delete": {
         "summary": "删除报文",
         "deprecated": false,
@@ -666,7 +672,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939921-run"
       }
     },
-    "/uygur/text/batchDelete": {
+    "/api/uygur/text/batchDelete": {
       "post": {
         "summary": "批量删除报文",
         "deprecated": false,
@@ -709,7 +715,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939922-run"
       }
     },
-    "/uygur/text/updateByOldType": {
+    "/api/uygur/text/updateByOldType": {
       "post": {
         "summary": "按旧分类ID批量更新报文分类",
         "deprecated": false,
@@ -1346,12 +1352,11 @@
           {
             "name": "id",
             "in": "path",
-            "description": "",
+            "description": "融合报告ID（雪花字符串）",
             "required": true,
-            "example": 0,
+            "example": "1234567890123456789",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
@@ -1387,12 +1392,11 @@
           {
             "name": "id",
             "in": "path",
-            "description": "",
+            "description": "融合报告ID（雪花字符串）",
             "required": true,
-            "example": 0,
+            "example": "1234567890123456789",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
@@ -1428,12 +1432,11 @@
           {
             "name": "id",
             "in": "path",
-            "description": "",
+            "description": "融合报告ID（雪花字符串）",
             "required": true,
-            "example": 0,
+            "example": "1234567890123456789",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
@@ -2469,6 +2472,756 @@
         "x-apifox-folder": "RAG 文档上传",
         "x-apifox-status": "released",
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-473111074-run"
+      }
+    },
+    "/api/directory/tree": {
+      "get": {
+        "summary": "获取完整的三级目录树",
+        "deprecated": false,
+        "description": "返回三级目录结构（一级：分类，二级：发送单位，三级：报文）",
+        "tags": [
+          "目录树"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目录树",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/analyze/{originTextId}": {
+      "post": {
+        "summary": "对指定报文进行目标分析",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "originTextId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "报文ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/analyze/batch": {
+      "post": {
+        "summary": "批量分析指定时间段内的报文",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "startTime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "yyyy-MM-dd"
+          },
+          {
+            "name": "endTime",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "yyyy-MM-dd"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/analysis/list": {
+      "get": {
+        "summary": "查询目标分析列表（支持按区域、目标名称筛选）",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "regionName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "区域名称"
+          },
+          {
+            "name": "targetName",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "目标名称"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/analysis/byReport/{originTextId}": {
+      "get": {
+        "summary": "根据报文ID查询目标分析",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "originTextId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "报文ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/fusion": {
+      "post": {
+        "summary": "对多个目标进行融合分析",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "example": [
+                "第七舰队",
+                "B-52轰炸机"
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/fusion/list": {
+      "get": {
+        "summary": "查询所有融合结果",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/alias": {
+      "post": {
+        "summary": "添加别名映射",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "alias",
+                  "canonicalName"
+                ],
+                "properties": {
+                  "alias": {
+                    "type": "string",
+                    "description": "别名"
+                  },
+                  "canonicalName": {
+                    "type": "string",
+                    "description": "标准名称"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/alias/list": {
+      "get": {
+        "summary": "查询所有别名映射",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/alias/{id}": {
+      "put": {
+        "summary": "更新别名映射",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "别名映射ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "canonicalName"
+                ],
+                "properties": {
+                  "canonicalName": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      },
+      "delete": {
+        "summary": "删除别名映射",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "别名映射ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/uygur/filter": {
+      "get": {
+        "summary": "高级筛选查询接口",
+        "deprecated": false,
+        "description": "支持按分类、发送单位、关键词、时间范围筛选报文",
+        "tags": [
+          "报文管理"
+        ],
+        "parameters": [
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "分类名称"
+          },
+          {
+            "name": "sendUnit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "发送单位名称"
+          },
+          {
+            "name": "keyword",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "匹配title或content"
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "yyyy-MM-dd"
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "yyyy-MM-dd"
+          },
+          {
+            "name": "pageNum",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/uygur/filter/advanced": {
+      "post": {
+        "summary": "高级筛选（OR关键词 + AND时间）",
+        "deprecated": false,
+        "description": "targetKeywords / regionKeywords 之间 OR，与 startDate~endDate 之间 AND。分页返回。",
+        "tags": [
+          "报文管理"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "targetKeywords": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "目标关键词列表（OR 匹配 content）"
+                  },
+                  "regionKeywords": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "区域关键词列表（OR 匹配 content）"
+                  },
+                  "startDate": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "yyyy-MM-dd"
+                  },
+                  "endDate": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "yyyy-MM-dd"
+                  },
+                  "pageNum": {
+                    "type": "integer",
+                    "default": 1
+                  },
+                  "pageSize": {
+                    "type": "integer",
+                    "default": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResultVO" }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "报文管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/analyze/batch/async": {
+      "post": {
+        "summary": "启动异步批量目标分析任务",
+        "deprecated": false,
+        "description": "立即返回 taskId + totalCount，前端轮询 /analyze/task/{taskId} 查询进度。",
+        "tags": [
+          "目标管理"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "startTime": {
+                    "type": "string",
+                    "description": "yyyy-MM-dd"
+                  },
+                  "endTime": {
+                    "type": "string",
+                    "description": "yyyy-MM-dd"
+                  }
+                },
+                "required": ["startTime", "endTime"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResultVO" }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/analyze/task/{taskId}": {
+      "get": {
+        "summary": "查询批量分析任务进度",
+        "deprecated": false,
+        "description": "返回 {taskId,total,done,failed,running,currentSid,logs,eta}。",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "任务ID（形如 analysis_batch_1700000000000）",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResultVO" }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/analyze/task/{taskId}/stop": {
+      "post": {
+        "summary": "停止批量分析任务",
+        "deprecated": false,
+        "description": "请求停止后任务循环退出（不会撤回已处理记录）。",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "任务ID",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResultVO" }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
+      }
+    },
+    "/api/target/fusion/detail": {
+      "get": {
+        "summary": "目标融合详情（按目标名）",
+        "deprecated": false,
+        "description": "返回 {basicInfo:{targetName,sourceCount,sources[]}, fusionResult:{analysis,difference,regionFusionResult}}。sources[] 中每条 {sendUnit,foundTime,description,url}。该目标无任何分析记录返回业务错误。",
+        "tags": [
+          "目标管理"
+        ],
+        "parameters": [
+          {
+            "name": "targetName",
+            "in": "query",
+            "description": "目标名称（已经过别名映射后的标准名）",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ResultVO" }
+              }
+            },
+            "headers": {},
+            "x-apifox-ordering": 0
+          }
+        },
+        "security": [],
+        "x-apifox-folder": "目标管理",
+        "x-apifox-status": "released"
       }
     }
   },
