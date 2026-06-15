@@ -139,7 +139,9 @@ logging:
 mybatis-plus:
   type-aliases-package: com.qy.dch.dto
   mapper-locations: classpath:mapper/*.xml
-  configuration: { map-underscore-to-camel-case: true }
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl   # 开发期打印 SQL 到 stdout
   global-config:
     db-config:
       id-type: ASSIGN_ID            # 雪花算法 19 位字符串
@@ -199,22 +201,24 @@ xwBackend/
 ├── mvnw / mvnw.cmd / .mvn/
 ├── src/main/java/com/qy/dch/
 │   ├── DchApplication.java               # 启动类（@SpringBootApplication + @EnableScheduling）
-│   ├── common/                           # ResultVO / ErrorCode / BusinessException
+│   ├── common/                           # ResultVO / ErrorCode / BusinessException / AlgorithmServiceException
 │   ├── config/                           # CORS / Druid / Mybatis-Plus / Minio / RestTemplate / GlobalExceptionHandler / MetaObjectHandler
-│   ├── controller/                       # 12 个 Controller（详见 §10）
+│   ├── controller/                       # 11 个 Controller（详见 §10；TestController 已删除）
 │   ├── domain/                           # PageDomain（旧版分页 VO）
 │   ├── dto/                              # 19 个 DTO（出参/算法侧契约）
 │   ├── entity/                           # BaseEntity / Category / OriginText / TargetAlias / TargetAnalysis / TargetFusion
-│   ├── mapper/                           # 9 个 Mapper（注解 + XML 混合）
+│   ├── mapper/                           # 13 个 Mapper（注解 + XML 混合，详见 §8）
 │   ├── rag/                              # 知识库子系统 (chunk/config/embed/model/parser/search/store)
 │   ├── request/                          # 12 个 RequestVO（入参）
 │   ├── service/                          # interface + impl
+│   │   └── client/                       # AlgorithmClient（Python 算法服务统一 HTTP 客户端）
 │   ├── task/                             # 定时任务（RagIndexingTask、DailyAnalysisTask）
 │   └── util/                             # CategoryClassifier
 ├── src/main/resources/
 │   ├── application.yml
 │   ├── db/                               # DDL 历史（已被 docs/sql/2026-06-14-system-integration.sql 收敛为权威）
-│   └── mapper/                           # FusionMapper.xml / RagDocumentMapper.xml
+│   └── mapper/                           # FusionMapper.xml / RagDocumentMapper.xml / OriginTextMapper.xml /
+│                                         # EventAnalysisMapper.xml / TargetAnalysisMapper.xml
 └── src/test/java/com/qy/dch/             # 接口集成测试 + RAG 单测
 ```
 
@@ -486,15 +490,31 @@ CREATE TABLE `rag_document` (
 | FORBIDDEN | 1003 | 禁止访问 |
 | RESOURCE_NOT_FOUND | 2001 | 资源不存在 |
 | DUPLICATE_KEY | 2002 | 数据重复 |
+| ORIGIN_TEXT_NOT_FOUND | 2101 | 报文不存在 |
+| ORIGIN_TEXT_ALREADY_EXTRACTED | 2102 | 报文已抽取 |
+| CATEGORY_NOT_FOUND | 2201 | 分类不存在 |
+| CATEGORY_HAS_CHILDREN | 2202 | 分类下存在子节点，无法删除 |
+| CATEGORY_NAME_DUPLICATE | 2203 | 分类名称已存在 |
+| IMPORT_FILE_EMPTY | 2301 | 导入文件不能为空 |
+| IMPORT_FILE_FORMAT_ERROR | 2302 | 文件格式错误 |
 | RAG_INDEXING_RUNNING | 3001 | 索引任务正在执行中 |
 | RAG_SEARCH_FAILED | 3002 | 语义检索失败 |
 | DB_TABLE_NOT_ALLOWED | 4001 | 不允许操作的表 |
 | DB_FIELD_PROTECTED | 4002 | 核心字段禁止修改 |
 | DB_DDL_FAILED | 4003 | DDL 执行失败 |
+| ALGORITHM_SERVICE_UNAVAILABLE | 5001 | 算法服务不可用 |
+| ALGORITHM_SERVICE_TIMEOUT | 5002 | 算法服务超时 |
+| ALGORITHM_SERVICE_INVALID_RESPONSE | 5003 | 算法服务返回数据异常 |
 
 #### 7.1.3 `BusinessException extends RuntimeException`
 
 `@Getter`，`final ErrorCode errorCode; final Object data;` 三构造：`(ErrorCode)`、`(ErrorCode, String customMessage)`、`(ErrorCode, String customMessage, Object data)`。
+
+Service 层抛 `BusinessException` 替代 `return null/false`、`throw new RuntimeException(...)`，由 `GlobalExceptionHandler` 统一拦截并返回精确错误码（详见 §11.7）。
+
+#### 7.1.4 `AlgorithmServiceException extends BusinessException`
+
+算法服务（Python LLM 服务）调用异常专用类型；构造支持 `(ErrorCode)` / `(ErrorCode, String)` / `(ErrorCode, String, Throwable)`，对应 `ALGORITHM_SERVICE_*`（5001/5002/5003）三个错误码。所有 Service 调用算法服务必须经 `service.client.AlgorithmClient`，由其在失败时抛出此异常（详见 §9.14）。
 
 ### 7.2 `entity`
 
@@ -583,10 +603,14 @@ CREATE TABLE `rag_document` (
 
 ## 8. Mapper（持久层）
 
-### 8.1 `EventAnalysisMapper`（注解）
+> **重构说明**：原 `UygurMapper` 已按职责拆分为 `OriginTextMapper`（origin_text CRUD）、`ImportMapper`（JSONL 批量导入）、`CategoryMapper`（基于 Category 实体的分类树）。`UygurMapper` 缩减到 ~90 行，仅保留 `UygurServiceImpl/DashboardServiceImpl` 仍依赖的 6 个 text_type 兼容方法（计划在后续 Service 改名时迁完后彻底删除）。
+>
+> 复杂的多表 JOIN / 含 `<foreach>` `<if>` 动态 SQL 已外迁到 XML：`OriginTextMapper.xml`、`EventAnalysisMapper.xml`、`TargetAnalysisMapper.xml`，与原有 `FusionMapper.xml` / `RagDocumentMapper.xml` 同位 `src/main/resources/mapper/`。
+
+### 8.1 `EventAnalysisMapper`（注解 + XML）
 
 - `insertOrUpdate(EventAnalysisDTO)` — `INSERT ... ON DUPLICATE KEY UPDATE event_time, event_location, event_analysis, analysis_date`
-- `queryByDateAndKeywords(startDate, endDate, List<String> keywords)` — `<script>` `event_analysis ea LEFT JOIN origin_text ot ON ea.origin_text_id=ot.id`，`ea.analysis_date BETWEEN`，keywords AND-组合 OR 三字段 LIKE
+- `queryByDateAndKeywords(startDate, endDate, List<String> keywords)` — XML（`<foreach>` 关键词 AND 组合 OR 三字段 LIKE）
 - `countByDate(LocalDate)`
 - `countByOriginTextId(String)`
 
@@ -627,13 +651,13 @@ ResultMap `FusionResultMap → FusionDTO`：`id→fusionId, title, summary, time
 
 `insert / selectCanonicalNameByAlias / selectAll(ORDER BY id) / update(canonical_name) / deleteById / selectAliasesByCanonicalName`
 
-### 8.7 `TargetAnalysisMapper`
+### 8.7 `TargetAnalysisMapper`（注解 + XML）
 
 - `insert(TargetAnalysis)` — 字段含 `raw_target_name`，is_fused=0
-- `batchInsert(List)` — `<foreach>`
+- `batchInsert(List)` — XML `<foreach>`
 - `selectByOriginTextId / selectAll(ta LEFT JOIN ot, 出 reportTitle、sendUnitName) / selectByFilter(regionName?, targetName?)`
-- `selectByTargetNames(List<String>)` — `WHERE target_name IN (<foreach>)`
-- `updateFusedStatus(List<String> ids, Integer isFused)`
+- `selectByTargetNames(List<String>)` — XML `WHERE target_name IN (<foreach>)`
+- `updateFusedStatus(List<String> ids, Integer isFused)` — XML
 - `countByTargetName()` — `GROUP BY target_name`
 
 ### 8.8 `TargetFusionMapper`
@@ -642,27 +666,60 @@ ResultMap `FusionResultMap → FusionDTO`：`id→fusionId, title, summary, time
 - `selectById / selectAll(ORDER BY fusion_time DESC)`
 - `selectLatestByTargetName(@Param("targetNameWithQuotes") String)` — `WHERE target_names LIKE CONCAT('%', #{tn}, '%') ORDER BY fusion_time DESC LIMIT 1`（needle 形如 `"哈尔科夫弹药库"`）
 
-### 8.9 `UygurMapper`（~50 方法，**只列方法分组**，SQL 形态见上）
+### 8.9 `OriginTextMapper extends MPJBaseMapper<OriginText>`（注解 + XML）
 
-> 所有列表查询均 `LEFT JOIN extraction_result e ON o.id=e.origin_text_id` 并投影 `o.*, o.id AS sid, e.labels_json AS labelsJson`。
+> 接管原 `UygurMapper` 中 origin_text 表的全部 CRUD、列表、统计、删除、迁移操作。继承 mybatis-plus-join 的 `MPJBaseMapper`，自带单表 CRUD（`selectById/insert/updateById` 操作 Entity）。
+>
+> 命名约定：返回 DTO 的方法（带 `LEFT JOIN extraction_result` 投影 `o.*, o.id AS sid, e.labels_json AS labelsJson`）使用 `selectDtoById/getTextListXxx`，与基类 `selectById`（返回 Entity）区分。
 
-- 插入：`insertOriginText, batchInsertTexts, batchInsertTextsWithImages`
+- 插入：`insertOriginText`（单条 DTO 插入；批量插入归 `ImportMapper`）
 - 列表/分页：
-  - 单条件：`getTextListByType/ModalTypePaged + count + 非分页`、`getTextListAllPaged + count + 非分页`
-  - 多条件：`getTextListByTypeIds/ModalTypesPaged + count`、`getTextListByCombinedFilterPaged + count`、`getTextListByAdvancedFilterPaged(typeIds, modalTypes, keywords, startTime, endTime, offset, pageSize) + count`
-  - 报文筛选：`getReportsByFilter(category, sendUnit, keyword, startDate, endDate, offset, pageSize) + count`
-  - 日期：`getReportsByDateRange(start, end, isExtracted)`、`selectIdsByTimeRange(start, end, isExtracted)`
-- 单行/状态：`selectById, selectIsExtracted, getTextById, updateExtractedStatus, resetAllExtractedStatus, getExtractionStats`
-- 删除/迁移：`deleteText, deleteTextsBatch, deleteTextsByType, updateTextsType, updateTextsByOldType`
+  - 单条件：`getTextListByType/ModalTypePaged + count + 非分页` 版本（注解 SQL）、`getTextListAllPaged + count + 非分页`
+  - 多条件（XML）：`getTextListByTypeIds/ModalTypesPaged + count`、`getTextListByCombinedFilterPaged + count`、`getTextListByAdvancedFilterPaged(typeIds, modalTypes, keywords, startTime, endTime, offset, pageSize) + count`
+  - 报文筛选（XML）：`getReportsByFilter(category, sendUnit, keyword, startDate, endDate, offset, pageSize) + count`
+  - 日期（XML）：`getReportsByDateRange(start, end, isExtracted)`、`selectIdsByTimeRange(start, end, isExtracted)`
+- 单行/状态：`selectDtoById, selectIsExtracted, getTextById, updateExtractedStatus, resetAllExtractedStatus, getExtractionStats`
+- 删除/迁移：`deleteText, deleteTextsBatch(XML), deleteTextsByType, updateTextsType(XML), updateTextsByOldType`
 - 统计：`countByType, countByModalType, countByCategory, countBySendUnitInCategory, getReportsByCategoryAndSendUnit`
-- 旧分类（`text_type` name 字段）：`getCategories, getCategoryByNameAndParent, getCategoryIdByName, deleteCategory, deleteCategoriesBatch, updateCategoryName`
-- 新分类（`Category` 实体）：`selectAllCategories / selectByParentId / selectCategoryById / selectCategoryByName / insertCategory / updateCategory / deleteCategoryById / deleteCategoryByPathPrefix / updateChildrenPath(old, new) / selectLeafCategories / countReportsByCategory / selectCategoryBySendUnitName`
+
+### 8.10 `ImportMapper`（注解）
+
+> JSONL 批量导入路径专用，仅两个 `<foreach>` `INSERT` 方法。
+
+- `batchInsertTexts(List<OriginTextDTO>)` — 字段：title/content/times/type/modal_type/category/send_unit_name/brief_type_name，is_extracted=0
+- `batchInsertTextsWithImages(List<OriginTextDTO>)` — 增加 images 字段（JSON 数组）
+
+### 8.11 `CategoryMapper`（注解）
+
+> 操作 `text_type` 表，基于 `Category` 实体；`CategoryService` 的唯一持久层依赖。
+
+- `selectAllCategories / selectByParentId(@Param parentId, null→IS NULL) / selectCategoryById / selectCategoryByName / selectCategoryBySendUnitName`
+- `insertCategory / updateCategory / deleteCategoryById`
+- `deleteCategoryByPathPrefix(fullPath)` — `LIKE CONCAT(#{fullPath}, '%')`，级联删自身和所有子孙
+- `updateChildrenPath(oldPathPrefix, newPathPrefix)` — `CONCAT + SUBSTRING` 改写子树前缀
+- `selectLeafCategories` — `is_leaf=1`
+- `countReportsByCategory` — `text_type LEFT JOIN origin_text` 聚合
+
+### 8.12 `UygurMapper`（缩减版，~90 行）
+
+> 仅保留兼容旧 Service 的 6 个 `text_type` 名称字段操作。新分类逻辑请走 `CategoryMapper`。
+
+- `getCategories()` → `List<TextTypeDTO>`（`id, name AS type_name, parent_id`）
+- `getCategoryByNameAndParent(typeName, parentId)`、`getCategoryIdByName(categoryName)`
+- `deleteCategory(categoryId)`、`deleteCategoriesBatch(List<String>)`
+- `updateCategoryName(categoryId, newTypeName)`
+
+### 8.13 `TextTypeMapper extends MPJBaseMapper<TextType>`（预留，当前未注入）
+
+> 基于 mybatis-plus-join，提供 LambdaQuery 风格的 text_type 默认方法（`selectAllOrdered`、`selectByParentId`、`selectByName`、`selectLeafs`、`deleteByPathPrefix`、`updateChildrenPath`、`countReportsByCategory`、`renameAndUpdatePath`）。预留给后续把 CategoryMapper 迁到 Lambda 风格时启用。
 
 ---
 
 ## 9. Service（业务层）
 
-> 均 `@Service` + `@Resource` 注入 mapper / 第三方 bean。复杂逻辑要点描述如下；实现完整代码见仓库。
+> 所有 ServiceImpl 统一采用 **`@RequiredArgsConstructor` 构造器注入**（依赖字段声明为 `private final`），不再使用 `@Autowired` / `@Resource` 字段注入。例外：`DocumentExportServiceImpl` 因需要 `@Qualifier` 选择特定 RestTemplate，保留 `@Autowired`；`rag/embed/EmbeddingService` 注入按 bean 名匹配的 `embeddingRestTemplate`，亦保留 `@Autowired`。
+>
+> Service 层抛 `BusinessException` / `AlgorithmServiceException` 替代 `return null/false` 与裸 `RuntimeException`。算法服务（Python LLM）调用统一走 `service.client.AlgorithmClient`（详见 §9.13）。复杂逻辑要点描述如下；实现完整代码见仓库。
 
 ### 9.1 `CategoryService`
 
@@ -694,14 +751,14 @@ ResultMap `FusionResultMap → FusionDTO`：`id→fusionId, title, summary, time
 
 ### 9.5 `EventAnalysisService`
 
-- 算法服务：`POST {algorithm.service.url}/eventSplit` body `{text}`，期待 `{code, data.events:[{eventTime, eventLocation, eventContent, eventAnalysis}, ...]}`。
+- 算法服务：通过 `AlgorithmClient.splitEvents(content, startDate, endDate)` 调 `POST /eventSplit`（详见 §9.13）。
 - `analyzeReportsByDate(start, end)`：`getReportsByDateRange` → 跳过 `countByOriginTextId>0` → 逐条算法 → `insertOrUpdate`。返回 total/success/failed/skipped。
 - `queryEvents(start, end, keywords)`：`queryByDateAndKeywords`。
 - `getAnalysisStatus(date)` → `{date, eventCount, analyzed:eventCount>0}`。
 
 ### 9.6 `ExtractionService`
 
-- HTTP：`HttpURLConnection POST {algorithm.service.url}/extract` body `{text, origin_text_id}`，10s/1200s。
+- 算法服务：`AlgorithmClient.extract(content, originTextId)` → `POST /extract`（不再直接使用 `HttpURLConnection`/`RestTemplate`）。
 - `extract(id, force)`：`is_extracted=1 && !force` 直接返回；否则取文本 → 算法服务 → `parseAndSave` → `updateExtractedStatus(id,1)`。
 - `parseAndSave`：`model="GLM-5-hierarchical"`, status=`completed`，events/labels/entities 空缺自动补 `{"events":[]}/[]/{}`，`insertOrUpdate`。
 - `getResult(id)`：events_json 兼容包对象/裸数组；labels/entities 透传。
@@ -772,6 +829,48 @@ ResultMap `FusionResultMap → FusionDTO`：`id→fusionId, title, summary, time
 - `getCategoryTree()`：两层 — `countByCategory` 一级 → `countBySendUnitInCategory` 二级。
 - `getReportsByFilter / getReportsByAdvancedFilter`：分页直查。
 - 删除/迁移分类与报文一组 CRUD。
+
+### 9.14 `service.client.AlgorithmClient` + `Impl`
+
+> **统一算法服务（Python LLM）HTTP 客户端**，替代 5 处分散的 RestTemplate/HttpURLConnection 模板代码（删除 ~296 行）。
+
+**接口方法（5 个）**：
+1. `extract(content, originTextId)` → `JSONObject` — POST `/extract`，事件抽取
+2. `fuse(FusionCreateRequest)` → `JSONObject` — POST `/fusion/create`，报文融合
+3. `analyzeTarget(AlgorithmAnalyzeRequest)` → `AlgorithmAnalyzeResponse` — POST `/api/target/analyze`，目标分析
+4. `fuseTarget(AlgorithmFusionRequest)` → `AlgorithmFusionResponse` — POST `/api/target/fusion`，目标融合
+5. `splitEvents(content, startDate, endDate)` → `JSONObject` — POST `/eventSplit`，事件分析
+
+**实现**（`AlgorithmClientImpl`）：
+- `@Component`，构造器注入 `RestTemplate` + `@Value("${algorithm.service.url}")`
+- 两个内部通用方法：`postJson(path, body, op)` 返回 `JSONObject`、`postTyped(path, body, Class<T>, op)` 返回强类型
+- 统一异常处理：
+  - HTTP 非 2xx → `AlgorithmServiceException(ALGORITHM_SERVICE_UNAVAILABLE)`
+  - `SocketTimeoutException` → `AlgorithmServiceException(ALGORITHM_SERVICE_TIMEOUT)`
+  - 空响应 → `AlgorithmServiceException(ALGORITHM_SERVICE_INVALID_RESPONSE)`
+  - 其他 `RestClientException` → `ALGORITHM_SERVICE_UNAVAILABLE`
+
+**Service 调用示例**：
+```java
+@Service
+@RequiredArgsConstructor
+public class ExtractionServiceImpl {
+    private final AlgorithmClient algorithmClient;
+    
+    public void extract(String sid) {
+        OriginTextDTO text = originTextMapper.selectById(sid);
+        JSONObject result = algorithmClient.extract(text.getContent(), sid);
+        // 处理 result
+    }
+}
+```
+
+**重构收益**：
+- 删除 `ExtractionServiceImpl.callAlgorithmService()`（88 行）
+- 删除 `FusionServiceImpl.callAlgorithmService() + createDefaultFusion()`（108 行）
+- 删除 `EventAnalysisServiceImpl.callEventSplitApi()`（约 30 行）
+- 删除 `TargetAnalysisServiceImpl` / `TargetFusionServiceImpl` 各约 35 行 HTTP 模板
+- 错误处理统一、日志统一、超时语义统一
 
 ---
 
@@ -942,12 +1041,18 @@ ResultMap `FusionResultMap → FusionDTO`：`id→fusionId, title, summary, time
 
 ### 11.7 `GlobalExceptionHandler`
 
-`@RestControllerAdvice`，按优先级：
-1. `BusinessException` → warn + `ResultVO.error(code, msg, data?)`
-2. `MethodArgumentNotValidException` → 字段:错误 拼接 → `PARAM_INVALID`
-3. `DataAccessException` → cause 是 `SQLIntegrityConstraintViolationException` 返 `DUPLICATE_KEY`，否则 `SYSTEM_ERROR`
-4. `RuntimeException` → `ResultVO.bizFail(...)`
-5. `Exception` → `ResultVO.systemError(...)`
+`@RestControllerAdvice`，8 个 `@ExceptionHandler` 按继承层级优先匹配：
+
+1. **`AlgorithmServiceException`** → `log.warn` + `ResultVO.error(e.getErrorCode())` 保留 5001-5003 系统错误码
+2. **`BusinessException`** → `log.warn` + `ResultVO.error(e.getErrorCode())` 保留 1002-4003 业务错误码（不再压平为 400）
+3. **`MethodArgumentNotValidException`** → `field: message` 拼接 → `ResultVO.bizFail(PARAM_INVALID + detail)`
+4. **`ConstraintViolationException`** → `@PathVariable/@RequestParam` 校验失败 → `ResultVO.bizFail(PARAM_INVALID + detail)`
+5. **`MissingServletRequestParameterException`** → 缺必填参数 → `ResultVO.bizFail("缺少必填参数: " + paramName)`
+6. **`MaxUploadSizeExceededException`** → 文件超限 → `ResultVO.bizFail("文件大小超过限制")`
+7. **`DataIntegrityViolationException`** → 数据库唯一约束/外键冲突 → `log.warn` + `ResultVO.bizFail("数据冲突: " + cause.getMessage())`
+8. **`Exception`**（兜底）→ `log.error` + `ResultVO.error(ErrorCode.SYSTEM_ERROR)`
+
+> **重构要点**：Service 层抛 `BusinessException(ErrorCode.ORIGIN_TEXT_NOT_FOUND)` 等精确错误码，Controller 删除冗余 try-catch 模板，异常自然向上传播。`AlgorithmServiceException` 在 handler 2 之前拦截（子类优先）。
 
 ---
 
