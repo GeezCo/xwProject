@@ -975,7 +975,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939930-run"
       }
     },
-    "/extraction/extract": {
+    "/api/extraction/extract": {
       "post": {
         "summary": "执行属性抽取（单条）",
         "deprecated": false,
@@ -1024,7 +1024,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939931-run"
       }
     },
-    "/extraction/result/{originTextId}": {
+    "/api/extraction/result/{originTextId}": {
       "get": {
         "summary": "查询抽取结果",
         "deprecated": false,
@@ -1064,7 +1064,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939932-run"
       }
     },
-    "/extraction/batch/start": {
+    "/api/extraction/batch/start": {
       "post": {
         "summary": "启动批量抽取任务",
         "deprecated": false,
@@ -1132,7 +1132,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939933-run"
       }
     },
-    "/extraction/batch/progress/{taskId}": {
+    "/api/extraction/batch/progress/{taskId}": {
       "get": {
         "summary": "查询批量抽取任务进度",
         "deprecated": false,
@@ -1172,7 +1172,7 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939934-run"
       }
     },
-    "/extraction/batch/stop/{taskId}": {
+    "/api/extraction/batch/stop/{taskId}": {
       "post": {
         "summary": "停止批量抽取任务",
         "deprecated": false,
@@ -2137,84 +2137,6 @@
         "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939957-run"
       }
     },
-    "/test/queryCategory": {
-      "get": {
-        "summary": "查询分类（编码调试）",
-        "deprecated": false,
-        "description": "",
-        "tags": [
-          "测试"
-        ],
-        "parameters": [
-          {
-            "name": "name",
-            "in": "query",
-            "description": "",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {},
-            "x-apifox-ordering": 0
-          }
-        },
-        "security": [],
-        "x-apifox-folder": "测试",
-        "x-apifox-status": "released",
-        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939958-run"
-      }
-    },
-    "/test/testMultipart": {
-      "post": {
-        "summary": "测试 multipart 表单参数编码",
-        "deprecated": false,
-        "description": "",
-        "tags": [
-          "测试"
-        ],
-        "parameters": [],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary",
-                    "example": ""
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": ""
-                  }
-                },
-                "required": [
-                  "name"
-                ]
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "headers": {},
-            "x-apifox-ordering": 0
-          }
-        },
-        "security": [],
-        "x-apifox-folder": "测试",
-        "x-apifox-status": "released",
-        "x-run-in-apifox": "https://app.apifox.com/web/project/8434232/apis/api-472939959-run"
-      }
-    },
     "/api/rag/document/upload": {
       "post": {
         "summary": "上传 DOCX 索引（纯文本，不做 OCR）",
@@ -3029,12 +2951,16 @@
                 "properties": {
                   "targetKeywords": {
                     "type": "array",
-                    "items": { "type": "string" },
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "目标关键词列表（OR 匹配 content）"
                   },
                   "regionKeywords": {
                     "type": "array",
-                    "items": { "type": "string" },
+                    "items": {
+                      "type": "string"
+                    },
                     "description": "区域关键词列表（OR 匹配 content）"
                   },
                   "startDate": {
@@ -3065,7 +2991,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ResultVO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
               }
             },
             "headers": {},
@@ -3100,7 +3028,10 @@
                     "description": "yyyy-MM-dd"
                   }
                 },
-                "required": ["startTime", "endTime"]
+                "required": [
+                  "startTime",
+                  "endTime"
+                ]
               }
             }
           }
@@ -3110,7 +3041,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ResultVO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
               }
             },
             "headers": {},
@@ -3136,7 +3069,9 @@
             "in": "path",
             "description": "任务ID（形如 analysis_batch_1700000000000）",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3144,7 +3079,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ResultVO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
               }
             },
             "headers": {},
@@ -3170,7 +3107,9 @@
             "in": "path",
             "description": "任务ID",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3178,7 +3117,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ResultVO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
               }
             },
             "headers": {},
@@ -3204,7 +3145,9 @@
             "in": "query",
             "description": "目标名称（已经过别名映射后的标准名）",
             "required": true,
-            "schema": { "type": "string" }
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -3212,7 +3155,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ResultVO" }
+                "schema": {
+                  "$ref": "#/components/schemas/ResultVO"
+                }
               }
             },
             "headers": {},
